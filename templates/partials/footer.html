@@ -1,0 +1,38 @@
+<footer id="footer">
+    <div class="footerContent">
+        <!-- <div class="line"></div> -->
+        <div class="companyInfo">
+            <h2>Lancer</h2>
+            <p>Where Talent Meets Opportunity</p>
+            <div class="subTxt">Explore thousands of openings, connect with top employers, and take the next step in your career journey with confidence.
+            </div>
+        </div>
+        <div class="contact">
+            <h2>Contact  And Profiles</h2>
+            <p> <a href="" class="default"> <img src="/static/images/gmail.png" alt="" srcset=""> <span> personal.prakhar@gmail.com</span> </a></p>
+            <p> <a href="https://github.com/Prakhar436" class="default"><img src="/static/images/github_blue.png" class="github" alt="" srcset=""> <span>Prakhar436</span></a> </p>
+            <p> <a href="https://www.linkedin.com/in/prakharpandey436/" class="default"><img src="/static/images/linkedin_blue_3.png" alt=""><span>prakharpandey436</span></a> </p>
+            <p> <a href="https://leetcode.com/u/prakhar_436/" class="default"><img src="/static/images/leetcode.svg" alt=""><span>prakhar_436</span></a> </p>
+
+        </div>
+        <div class="quickLinks">
+            <h2>Quick Links</h2>
+            <ul>
+                {% if not logged_in %}
+                <li><a href="/login">Login</a></li>
+                {% else%}
+                <li><a href="/logout">Logout</a></li>
+                {% endif %}
+                <li><a href="/#getting-started">Getting Started</a></li>
+                <li><a href="/exploreJobs">Jobs</a></li>
+                <li><a href="/#about">About Us</a></li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="copyright">
+        <p>&copy; 2024 Lancer | All Rights Reserved</p>
+    </div>
+
+
+</footer>

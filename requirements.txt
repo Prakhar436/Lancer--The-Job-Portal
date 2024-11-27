@@ -1,0 +1,9 @@
+Flask
+SQLAlchemy
+PyMySQL
+bcrypt
+cloudinary
+werkzeug
+gunicorn
+Flask-Session
+redis

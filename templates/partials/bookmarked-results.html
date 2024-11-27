@@ -1,0 +1,67 @@
+{% if not filtered and not list_of_jobs %} <!-- if no bookmarks -->
+    <div class="noBMJs">
+        <h2>No Bookmarks Found</h2>
+        <p>Press the 
+            <svg class="bookmark noBMJs_icon " 
+            width="32px" height="32px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+            <g id="SVGRepo_iconCarrier">
+                <path
+                    d="M5 6c0-1.4 0-2.1.272-2.635a2.5 2.5 0 0 1 1.093-1.093C6.9 2 7.6 2 9 2h6c1.4 0 2.1 0 2.635.272a2.5 2.5 0 0 1 1.092 1.093C19 3.9 19 4.6 19 6v13.208c0 1.056 0 1.583-.217 1.856a1 1 0 0 1-.778.378c-.349.002-.764-.324-1.593-.976L12 17l-4.411 3.466c-.83.652-1.245.978-1.594.976a1 1 0 0 1-.778-.378C5 20.791 5 20.264 5 19.208V6z"
+                    stroke="#375ae6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="" />
+            </g>
+        </svg> icon on a Job to save it. Bookmarked Jobs can be viewed here.</p>
+    </div>
+    <img class="noBMJ_img" src="static/images/no-applications.svg" alt="">
+
+{% elif filtered and not list_of_jobs %} <!-- if no bookmarks after filtering -->
+    <div class="noBMJs">
+        <h2>No Bookmarks Found</h2>
+        <p>No matching results found. Try changing the filters or check back later</p>
+    </div>
+    <img class="noBMJ_img" src="static/images/no-applications.svg" alt="">
+
+{% else %}
+
+<!-- bookmarked job-cards: -->
+{% for job in list_of_jobs %}
+        <div class="bmj_card" id="job-{{job.job_id}}">
+            <div class="heading {% if job.status == 'closed' %} disabled {% endif %}">
+                <img class="logo" src="{{job.secure_url}}" alt="" srcset="">
+                <div class="details">
+                    <a href="{% if job.status == 'open' %} job/{{job.job_id}} {%else%} # {%endif%}">
+                        <h2>
+                        {{job.title}}       
+                        {% if job.status == 'open' %}                  
+                        <svg width="14px" height="14px" class="link_icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                 <path stroke="#535C91" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 3h7v7M27.5 4.5L20 12M17 5H8a3 3 0 00-3 3v16a3 3 0 003 3h16a3 3 0 003-3v-9"></path> </g></svg>
+                        {% endif %}
+                    </h2>  
+                    </a>
+                    <h3><strong>{{job.company}}</strong> {{job.location}} • ${{job.salary}} • {{job.work_environment}} • {{job.employment_type}} • {{job.experience}}</h3>
+                </div>
+            </div>
+            <div class="status">
+                {% if job.status == 'open' %}
+                <span class="open">open</span>
+                {% else %}
+                <span class="closed">closed</span>
+                {% endif %}
+            </div>
+            {% if job.status == 'open' %} <!--can only apply if job is still open -->
+            <div class="apply">
+            </div>
+            {%endif%}
+
+            <div class="removeBM" title="Remove Bookmark">
+                <svg fill="#000000" width="64px" height="64px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M1415.377 0H505.586C411.536 0 335 76.536 335 170.586V1920l625.481-375.289L1585.963 1920V170.586C1585.963 76.536 1509.426 0 1415.377 0Zm56.862 1719.164L960.48 1412.109l-511.757 307.055V170.586c0-31.388 25.474-56.862 56.862-56.862h909.79c31.389 0 56.863 25.474 56.863 56.862v1548.578Zm-230.28-1181-80.516-80.403-200.95 201.064-201.064-201.064-80.403 80.403L880.09 739.228l-201.064 200.95 80.403 80.403 201.064-200.95 200.95 200.95 80.516-80.403-201.064-200.95 201.064-201.064Z" fill-rule="evenodd"></path> </g></svg>
+                    
+            </div>
+            <div class="date">
+                {% if job.created_at == job.updated_at %} Posted {% else %} Updated {% endif %} on {{job.updated_at.strftime('%d-%m-%Y')}}</div>
+        </div>
+        {%endfor%}
+{%endif%}

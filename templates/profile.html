@@ -1,0 +1,316 @@
+{% extends 'user-base.html' %}
+{% block title %}Profile{% endblock %}
+{% block head %}
+<script src="https://unpkg.com/htmx.org@2.0.0"
+    integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw"
+    crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- POPUP FOR ERRORS: -->
+<div class="popupContainer">
+    <div class="popup error">
+        <span></span>
+        <button class="close">&#10005;</button>
+    </div>
+</div>
+
+<main>
+    <div class="gradient"></div>
+    <div class="headerBox" id="headerBox">
+        <h1>{{user_data.firstname}}&nbsp;{{user_data.lastname}}</h1>
+        <h2>{{user_data.email}}</h2>
+    </div>
+    <section class="profileContent">
+        <div class="row">
+            <div class="profileCard statCard">
+                <div>
+                    <svg fill="#28d5a7" height="64px" width="64px" id="Layer_1" data-name="Layer 1"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke="#28d5a7" stroke-width="0.00016">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                        <g id="SVGRepo_iconCarrier">
+                            <path class="cls-1"
+                                d="M10.96873,5.19615A1.76316,1.76316,0,0,1,12.11058,4.706a1.76313,1.76313,0,0,1-.49016,1.14184L9.20568,8.26263l.00828.0258.06552.18373.02863.09319a1.35151,1.35151,0,0,1,.03324.29449,1.38462,1.38462,0,0,1-2.76923,0,1.34252,1.34252,0,0,1,.03324-.29354l.03414-.11076L6.694,8.29677l.012-.03414.0138-.01386a1.38856,1.38856,0,0,1,.62493-.62492l.01482-.01477.03318-.0111.16063-.05538.109-.03414a1.32061,1.32061,0,0,1,.58886,0l.109.03414.16062.05538.03319.0111ZM14,8.85984a5.97881,5.97881,0,0,1-1.79883,4.28032L10.8925,11.83155a4.08492,4.08492,0,0,0,.82944-4.78023l.55-.55011a2.57632,2.57632,0,0,0,.64-1.08077A5.96769,5.96769,0,0,1,14,8.85984Zm-6-6A5.99761,5.99761,0,0,0,3.79883,13.14016L5.1075,11.83155A4.13944,4.13944,0,0,1,9.75173,5.107l.56408-.56374a2.57061,2.57061,0,0,1,1.07-.63546A5.97,5.97,0,0,0,8,2.85984Z" />
+                        </g>
+                    </svg>
+                </div>
+                <div id="profile_completion">
+                    <h2>Profile Completion</h2>
+                    <p>{{user_data['completion_percentage']}}%</p>
+                </div>
+            </div>
+            <div class="profileCard statCard">
+                <div>
+                    <svg fill="#f9b851" height="40px" width="40px" version="1.1" id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 324.146 324.146" xml:space="preserve">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path
+                                d="M230.645,324.146H25.365c-4.418,0-8-3.582-8-8V69.811c0-4.418,3.582-8,8-8h205.279c4.418,0,8,3.582,8,8v15.766h20.236 c4.418,0,8,3.582,8,8s-3.582,8-8,8h-20.236v20.614h10.01c4.418,0,8,3.582,8,8s-3.582,8-8,8h-10.01v20.615h20.236 c4.418,0,8,3.582,8,8s-3.582,8-8,8h-20.236v20.613h10.01c4.418,0,8,3.582,8,8s-3.582,8-8,8h-10.01v104.727 C238.645,320.564,235.063,324.146,230.645,324.146z M33.365,308.146h189.279V77.811H33.365V308.146z M166.297,293.237 c-20.576,0-37.316-16.739-37.316-37.314s16.74-37.314,37.316-37.314c20.574,0,37.313,16.739,37.313,37.314 S186.871,293.237,166.297,293.237z M166.297,234.609c-11.754,0-21.316,9.562-21.316,21.314s9.562,21.314,21.316,21.314 c11.752,0,21.313-9.562,21.313-21.314S178.049,234.609,166.297,234.609z M298.781,262.335h-36.605c-4.418,0-8-3.582-8-8s3.582-8,8-8 h28.605V16H101.502v25.307c0,4.418-3.582,8-8,8s-8-3.582-8-8V8c0-4.418,3.582-8,8-8h205.278c4.418,0,8,3.582,8,8v246.335 C306.781,258.753,303.198,262.335,298.781,262.335z M105.182,235.255H66.215c-4.418,0-8-3.582-8-8s3.582-8,8-8h38.967 c4.418,0,8,3.582,8,8S109.6,235.255,105.182,235.255z M189.795,199.842H66.215c-4.418,0-8-3.582-8-8s3.582-8,8-8h123.58 c4.418,0,8,3.582,8,8S194.213,199.842,189.795,199.842z M189.795,164.429H66.215c-4.418,0-8-3.582-8-8s3.582-8,8-8h123.58 c4.418,0,8,3.582,8,8S194.213,164.429,189.795,164.429z M105.182,129.016H66.215c-4.418,0-8-3.582-8-8s3.582-8,8-8h38.967 c4.418,0,8,3.582,8,8S109.6,129.016,105.182,129.016z">
+                            </path>
+                        </g>
+                    </svg>
+                </div>
+                <div>
+                    <h2>Applications</h2>
+                    <p>{{user_data['applications_count']}}</p>
+                </div>
+            </div>
+            <div class="profileCard statCard">
+                <div>
+                    <svg fill="cyan" width="89px" height="89px" viewBox="0 0 32 32" id="Outlined"
+                        xmlns="http://www.w3.org/2000/svg" stroke="cyan">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                        <g id="SVGRepo_tracyanerCarrier" stroke-linecyanap="round" stroke-linejoin="round" />
+                        <g id="SVGRepo_icyanonCarrier">
+                            <title />
+                            <g id="Fill">
+                                <path
+                                    d="M22,2H10A3,3,0,0,0,7,5V30.3l7.73-3.61a3,3,0,0,1,2.54,0L25,30.3V5A3,3,0,0,0,22,2Zm1,25.16-4.89-2.28a5,5,0,0,0-4.22,0L9,27.16V8H23ZM23,6H9V5a1,1,0,0,1,1-1H22a1,1,0,0,1,1,1Z" />
+                                <path
+                                    d="M15,19.58A2,2,0,0,0,16.41,19l4.3-4.29-1.42-1.42L15,17.59l-2.29-2.3-1.42,1.42L13.59,19A2,2,0,0,0,15,19.58Z" />
+                            </g>
+                        </g>    
+                    </svg>
+                </div>
+                <div>
+                    <h2>Saved Jobs</h2>
+                    <p>{{user_data['bookmarked_jobs_count']}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="profileCard" id="pfp">
+                <div>
+                    <!-- loading animation -->
+                    <div class="loader htmx-indicator" id="pfp_loader"></div>
+
+                    <!-- edit button: -->
+                    <svg class="editBtn pfpEditBtn" width="64px" height="64px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg" stroke="#000000">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                        <g id="SVGRepo_iconCarrier">
+                            <path
+                                d="M20.1498 7.93997L8.27978 19.81C7.21978 20.88 4.04977 21.3699 3.32977 20.6599C2.60977 19.9499 3.11978 16.78 4.17978 15.71L16.0498 3.84C16.5979 3.31801 17.3283 3.03097 18.0851 3.04019C18.842 3.04942 19.5652 3.35418 20.1004 3.88938C20.6356 4.42457 20.9403 5.14781 20.9496 5.90463C20.9588 6.66146 20.6718 7.39189 20.1498 7.93997V7.93997Z"
+                                stroke="#9290C3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+                    </svg>
+                    <!-- hidden input[file] upload field that is activated via JS when edit btn is clicked: -->
+                    <form enctype="multipart/form-data" hx-post="/edit/pfp" hx-target="#pfp" hx-swap="none"
+                        hx-trigger="change" hx-indicator="#pfp_loader">
+                        <input type="file" name="pfp" id="profilePictureInput" style="display:none;">
+                    </form>
+
+                    <!-- PFP: -->
+                    <img src="{{user_data.pfp_secure_url}}" alt="">
+                </div>
+
+            </div>
+            <div class="profileCard" id="personalData">
+
+                <div id="userInfo">
+                    <h1>Personal Details</h1>
+                    <!-- loading animation -->
+                    <div class="loader htmx-indicator"  id="details-loader"></div>
+                    <!-- edit button: -->
+                    <svg class="editBtn pdEdit" width="64px" height="64px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg" stroke="#000000" hx-get="/edit/personal_details"
+                        hx-trigger="click" hx-target="#userInfo" hx-swap="outerHTML" hx-indicator="#details-loader">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                        <g id="SVGRepo_iconCarrier">
+                            <path
+                                d="M20.1498 7.93997L8.27978 19.81C7.21978 20.88 4.04977 21.3699 3.32977 20.6599C2.60977 19.9499 3.11978 16.78 4.17978 15.71L16.0498 3.84C16.5979 3.31801 17.3283 3.03097 18.0851 3.04019C18.842 3.04942 19.5652 3.35418 20.1004 3.88938C20.6356 4.42457 20.9403 5.14781 20.9496 5.90463C20.9588 6.66146 20.6718 7.39189 20.1498 7.93997V7.93997Z"
+                                stroke="#9290C3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+                    </svg>
+
+
+
+                    <div class="field-1">
+                        <div class="field-row">
+                            <div>
+                                <label for="fname">First Name:</label>
+                                <span id="fname">{{user_data.firstname | default('-', true)}}</span>
+                            </div>
+                            <div>
+                                <label for="lname">Last Name:</label>
+                                <span id="lname">{{user_data.lastname | default('-', true)}}</span>
+                            </div>
+                            <div>
+                                <label for="phone">Phone:</label>
+                                <span id="phone">{{user_data.phone_number | default('-', true)}}</span>
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div>
+                                <label for="email">Contact Email:</label>
+                                <span id="email"> {{user_data.email | default('-', true)}} </span>
+                            </div>
+                            <div>
+                                <label for="city">City:</label>
+                                <span id="city">{{user_data.city | default('-', true)}}</span>
+                            </div>
+                            <div>
+                                <label for="country">Country:</label>
+                                <span id="country">{{user_data.country | default('-', true) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="profileCard resume">
+                <!-- resume svg: -->
+                <svg fill="#535C91" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" width="78px" height="78px" viewBox="0 0 181.167 181.167"
+                    xml:space="preserve">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                    <g id="SVGRepo_iconCarrier">
+                        <g>
+                            <g>
+                                <path
+                                    d="M148.556,0H32.613c-9.994,0-18.121,8.126-18.121,18.115v144.94c0,9.986,8.126,18.111,18.121,18.111h115.943 c9.992,0,18.118-8.125,18.118-18.111V18.121C166.679,8.131,158.554,0,148.556,0z M159.431,163.055 c0,5.996-4.878,10.871-10.875,10.871H32.613c-5.995,0-10.87-4.875-10.87-10.871V18.121c0-5.995,4.875-10.87,10.87-10.87h115.943 c5.992,0,10.867,4.875,10.867,10.87v144.935H159.431z" />
+                                <path
+                                    d="M128.792,79.212H52.384c-1.839,0-3.324,1.491-3.324,3.33c0,1.838,1.485,3.33,3.324,3.33h76.407 c1.841,0,3.326-1.491,3.326-3.33C132.118,80.704,130.632,79.212,128.792,79.212z" />
+                                <path
+                                    d="M128.792,94.386H52.384c-1.839,0-3.324,1.494-3.324,3.333s1.485,3.326,3.324,3.326h76.407 c1.841,0,3.326-1.487,3.326-3.326C132.113,95.87,130.632,94.386,128.792,94.386z" />
+                                <path
+                                    d="M128.792,109.555H52.384c-1.839,0-3.324,1.494-3.324,3.331c0,1.839,1.485,3.328,3.324,3.328h76.407 c1.841,0,3.326-1.489,3.326-3.328C132.118,111.049,130.632,109.555,128.792,109.555z" />
+                                <path
+                                    d="M128.792,124.728H90.585c-1.836,0-3.328,1.488-3.328,3.327s1.492,3.333,3.328,3.333h38.206 c1.841,0,3.321-1.494,3.321-3.333S130.632,124.728,128.792,124.728z" />
+                                <path
+                                    d="M128.792,154.693h-26.747c-1.845,0-3.326,1.489-3.326,3.328c0,1.837,1.481,3.326,3.326,3.326h26.747 c1.841,0,3.321-1.489,3.321-3.326C132.113,156.182,130.632,154.693,128.792,154.693z" />
+                                <path
+                                    d="M94.296,64.583c0-6.298-7.251-14.793-17.039-17.275c4.089-2.75,6.907-8.181,6.907-13.072 c0-6.898-5.586-12.496-12.49-12.496c-6.896,0-12.49,5.598-12.49,12.496c0,4.886,2.818,10.317,6.898,13.072 c-9.774,2.481-17.03,10.982-17.03,17.275C49.06,72.025,94.296,72.025,94.296,64.583z M70.667,50.933H70.61l-2.068-2.375 c1.011,0.358,2.042,0.577,3.133,0.577c1.093,0,2.125-0.213,3.134-0.572l-2.074,2.369h-0.049l5.337,12.895l-6.348,6.332 l-6.341-6.332L70.667,50.933z" />
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+                <div class="field-2" id="resume">
+                    <h1>Your Resume</h1>
+                    <p>Recuiters will use your resume, so ensure that all relevant skills, experiences and education are
+                        up-to-date.</p>
+
+                    <p class="fileName">{{user_data.resume_name | default('-', true)}}</p>
+                    <div class="btn-grp">
+                        <a class="default resume_link" href="{{user_data.resume_secure_url | default('#', true)}}">
+                            <button class="view" {%if not user_data.resume_secure_url%} disabled {%endif%}>
+                                <!-- view svg: -->
+                                <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                                    <g id="SVGRepo_iconCarrier">
+                                        <path
+                                            d="M10.0464 14C8.54044 12.4882 8.67609 9.90087 10.3494 8.22108L15.197 3.35462C16.8703 1.67483 19.4476 1.53865 20.9536 3.05046C22.4596 4.56228 22.3239 7.14956 20.6506 8.82935L18.2268 11.2626"
+                                            stroke="#9290C3" stroke-width="1.5" stroke-linecap="round" />
+                                        <path
+                                            d="M13.9536 10C15.4596 11.5118 15.3239 14.0991 13.6506 15.7789L11.2268 18.2121L8.80299 20.6454C7.12969 22.3252 4.55237 22.4613 3.0464 20.9495C1.54043 19.4377 1.67609 16.8504 3.34939 15.1706L5.77323 12.7373"
+                                            stroke="#9290C3" stroke-width="1.5" stroke-linecap="round" />
+                                    </g>
+                                </svg>
+                                View
+                            </button>
+                        </a>
+                        <button class="update">
+                            <!-- edit svg: -->
+                            <svg width="64px" height="64px" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" stroke="#000000">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M20.1498 7.93997L8.27978 19.81C7.21978 20.88 4.04977 21.3699 3.32977 20.6599C2.60977 19.9499 3.11978 16.78 4.17978 15.71L16.0498 3.84C16.5979 3.31801 17.3283 3.03097 18.0851 3.04019C18.842 3.04942 19.5652 3.35418 20.1004 3.88938C20.6356 4.42457 20.9403 5.14781 20.9496 5.90463C20.9588 6.66146 20.6718 7.39189 20.1498 7.93997V7.93997Z"
+                                        stroke="#9290C3" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </g>
+                            </svg>
+                            Update
+                        </button>
+                        <!-- hidden file upload for update button  -->
+                        <form enctype="multipart/form-data" hx-post="/edit/profile_resume" hx-target="#resume" hx-swap="none"
+                            hx-trigger="change" hx-indicator="#resume_loader" style="display: none;">
+                            <input type="file" name="profile_resume" id="updateResumeInput">
+                        </form>
+
+                        <!-- loading animation -->
+                        <div class="loader htmx-indicator" id="resume_loader"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+<script>
+    const hidden_File_Upload_Btn = document.querySelector('#profilePictureInput'); //hidden input[file] upload field
+    document.querySelector('.pfpEditBtn').addEventListener('click', () => {
+        hidden_File_Upload_Btn.click(); //when edit btn is clicked, the hidden input[file] upload field is activated
+    });
+
+    const hidden_resume_upload = document.querySelector('#updateResumeInput'); //update button
+    console.log(hidden_resume_upload);
+    document.querySelector('.update').addEventListener('click', () => {
+        hidden_resume_upload.click(); //when edit btn is clicked, the hidden input[file] upload field is activated
+    });
+    
+    //PFP HTMX RESPONSE HANDLER:
+    document.querySelector('#pfp > div > form').addEventListener('htmx:afterRequest', (event) => { // check the reponse for success or error
+
+        response = JSON.parse(event.detail.xhr.responseText); //parse the response
+        if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+            console.log('response pfp is ', response.pfp_secure_url);
+            document.querySelector('#pfp > div > img').src = response.pfp_secure_url; //update the pfp
+            document.querySelector('.user-profile > a > img').src = response.pfp_secure_url; //update the pfp in the NAVBAR
+            document.querySelector('#profile_completion > p').innerText = response.completion_percentage + '%' //update the completion percentage
+
+        } else {
+            // Error response
+            const popup = document.querySelector('.popupContainer');
+            const errorResponse = response; //extract and log the error
+            console.log('error: ', errorResponse.error);
+            popup.querySelector('.popup.error > span').innerHTML = response.error;
+            popup.classList.add('show');
+            popup.querySelector('.popup.error > button').addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+        }
+    });
+
+    //RESUME HTMX RESPONSE HANDLER:
+    document.querySelector('#resume form').addEventListener('htmx:afterRequest', (event) => { // check the reponse for success or error
+
+        response = JSON.parse(event.detail.xhr.responseText); //parse the response
+        if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+            console.log('response resume is ', response.profile_resume_secure_url);
+            document.querySelector('#resume > .btn-grp > .resume_link').href = response.profile_resume_secure_url; //update the resume link
+            document.querySelector('#resume > .fileName').innerText = response.profile_resume_name; //update the resume name
+            document.querySelector('#profile_completion > p').innerText = response.completion_percentage + '%' //update the completion percentage
+            if (document.querySelector('#resume > .btn-grp .view').hasAttribute('disabled')) {
+                document.querySelector('#resume > .btn-grp .view').removeAttribute('disabled');
+            }
+        } else {
+            // Error response
+            const popup = document.querySelector('.popupContainer');
+            const errorResponse = response; //extract and log the error
+            console.log('error: ', errorResponse.error);
+            popup.querySelector('.popup.error > span').innerHTML = response.error;
+            popup.classList.add('show');
+            popup.querySelector('.popup.error > button').addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+        }
+    });
+
+</script>
+{% endblock %}

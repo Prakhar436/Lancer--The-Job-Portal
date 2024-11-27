@@ -1,0 +1,153 @@
+{%extends 'user-base.html' %}
+{% block title %}Action Center{%endblock%}
+{%block head %}
+<script src="https://unpkg.com/htmx.org@2.0.0"
+    integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw"
+    crossorigin="anonymous"></script>
+{%endblock%}
+{%block content%}
+
+<!-- POPUP FOR ERRORS: -->
+<div class="popupContainer">
+    <div class="popup error">
+        <span></span>
+        <button class="close">&#10005;</button>
+    </div>
+</div>
+
+<!-- modal for confirmation: -->
+<dialog class="modal job-modal">
+    <h2>Confirm</h2>
+    <p> <!-- filled dynamically by JS --> </p>
+    <div class="modalActions">
+        <button class="cancelBtn">Cancel</button>
+        <button class="confirmBtn" hx-post="" hx-target="" hx-trigger="click">
+            Confirm</button>
+    </div>
+</dialog>
+
+<header class="acHeader">
+    <h1>Action Center</h1>
+</header>
+
+<div class="section-btn-grp">
+    <button class="active" hx-get="/applications" hx-trigger="click" hx-target="#container" hx-swap="innerHTML">
+        Applications
+    </button>
+    <button class="{% if has_new_notifications == True%} new-notifs {%endif%}" hx-get="/notifications" hx-trigger="click" hx-target="#container" hx-swap="innerHTML">
+        Notifications
+    </button>
+</div>
+<main class="acMain">
+    <div class="container" id="container">
+        {% include 'partials/applications-Container.html'%}
+</main>
+
+<script>
+    const sectionBtns = document.querySelectorAll('.section-btn-grp > button');
+    sectionBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            sectionBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+    const modal = document.querySelector('.modal');
+
+    //client-side ac_card (applications) sorting:
+    const container = document.querySelector('.container');
+    container.addEventListener('click', (e) => { //event delegation, because the sort buttons and ac_cards are dynamically loaded (and any event listeners applied on them directly would be lost in case of reswapping)
+        console.log('clicked element: ', e.target, e.target.closest('.withdraw'));
+        if (e.target.closest('.sortBtn-grp > button')) { //check if clicked element is a sort button
+            handleSort(e);
+        }
+        else if (e.target.closest('.withdraw')) { // else check if clicked element is a withdraw-application button (to setup the confirmation modal)
+            setupModal(e.target.closest('.withdraw'));
+            modal.showModal();
+            
+        }
+    });
+
+    function handleSort(event) {
+        const ac_cards = document.querySelectorAll('.ac_card');
+        const sortBtns = document.querySelectorAll('.sortBtn-grp > button'); //refer 'partials/applications-Container.html'
+            sortBtns.forEach(b => b.classList.remove('active'));
+            const btn = event.target;
+            btn.classList.add('active');
+            ac_cards.forEach(card => {
+                if (btn.textContent === 'All Applications') {
+                    card.style.display = 'flex';
+                } else if (btn.textContent == 'Under Review') {
+                    console.log(card.querySelector('.status > span').classList.contains('under-review'));
+                    console.log('classlist', card.querySelector('.status > span').classList);
+                    card.querySelector('.status > span').classList.contains('under-review') ? card.style.display = 'flex' : card.style.display = 'none';
+                } else if (btn.textContent === 'Completed') {
+                    card.querySelector('.status > span').classList.contains('under-review') ? card.style.display = 'none' : card.style.display = 'flex';
+                }
+            });
+    }
+
+    //modal script
+    const cancelBtn = document.querySelector('.cancelBtn');
+    const confirmBtn = document.querySelector('.confirmBtn');
+    cancelBtn.addEventListener('click', () => {
+        modal.close();
+    });
+    confirmBtn.addEventListener('click', () => {
+        modal.close();
+    });
+
+
+    function setupModal(withdraw_btn) {
+        const ac_card = withdraw_btn.closest('.ac_card'); //find the ac_card for which the button was clicked
+        const application_id = ac_card.id.replace('application-', ''); //get the application id for the AJAX request using hx-post
+        const jobTitle = ac_card.querySelector('.details h2').textContent; 
+        const company = ac_card.querySelector('.details h3 strong').textContent;
+        modal.querySelector('p').innerHTML = `Are you sure you want to withdraw your application for the role of <strong>${jobTitle}</strong> at <strong>${company}</strong>? <br> <br>
+        This action cannot be undone, and your application will no longer be considered. <br> However, while the job opening is still active, you can reapply by visiting the job page again.`;
+        confirmBtn.setAttribute('hx-post', `/withdraw/${application_id}`);
+        confirmBtn.setAttribute('hx-target', `#application-${application_id}`); 
+        confirmBtn.setAttribute('hx-swap', 'outerHTML swap:0.6s'); //replaces the entire .ac_card with 0.6s delay to allow animation to play
+        htmx.process(confirmBtn); //without process(), the hx-attributes are not updated
+    }
+
+    //htmx-response handler for withdraw request:
+    confirmBtn.addEventListener('htmx:afterRequest', (event) => {
+        if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+            document.querySelector('.section-btn-grp > button:nth-child(2)').classList.add('new-notifs'); //activate shimmer to the notifications button to indicate new notifications 
+            
+        } else {
+            // Error response
+            const popup = document.querySelector('.popupContainer');
+            const response = JSON.parse(event.detail.xhr.responseText); //extract and log the error
+            console.log('error: ', response.error);
+            popup.querySelector('.popup.error > span').innerText = response.error;
+            popup.classList.add('show');
+            popup.querySelector('.popup.error > button').addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+        }
+
+    });
+
+    //htmx-response handler for switching between applications and notifications section:
+    sectionBtns.forEach(btn =>{
+        btn.addEventListener('htmx:afterRequest', (event) => {
+            if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+                if (btn.classList.contains('new-notifs')) { //if it is the notifications button
+                    btn.classList.remove('new-notifs'); //remove the shimmer from the notifications button
+                }
+            }
+            else{
+                // Error response
+                const popup = document.querySelector('.popupContainer');
+                popup.querySelector('.popup.error > span').innerText = 'Error occurred while loading data. Please try again later.';
+                popup.classList.add('show');
+                popup.querySelector('.popup.error > button').addEventListener('click', () => {
+                    popup.classList.remove('show');
+                });
+            }
+        });
+    })
+
+</script>
+{%endblock%}

@@ -1,0 +1,167 @@
+{% extends 'user-base.html' %}
+
+{% block title%}
+Home
+{% endblock %}
+
+{% block content %}
+<section class="wrapper">
+    <div class="hero">
+        <div class="heroTxt">
+            <div class="subHeading animate-slide-in">
+                Ready to launch your career?
+            </div>
+            <div class="heading animate-slide-in">
+                Your Job Search Ends Here
+            </div>
+            <div class="callToAction">
+                {% if not logged_in %}
+                <a href="/register"><button class="btn animate-slide-in" id="button">Sign Up</button></a>
+                {% endif %}
+                <a href="/exploreJobs"><button class="btn animate-slide-in" id="button">Explore Jobs</button></a>
+            </div>
+        </div>
+        <div class="heroImg">
+            <img src="static/images/candidate.svg" alt="">
+        </div>
+    </div>
+</section>
+
+<section class="about" id="about">
+    <h1>About Us</h1>
+    <p class="sub">Lancer is where talent meets opportunity. We strive to bridge the gap between employers and job
+        seekers, providing a seamless platform for talent acquisition and career advancement.</p>
+    <div class="card">
+        <div class="img">
+            <img src="https://media.istockphoto.com/id/1428132171/photo/business-global-internet-connection-application-technology-and-digital-marketing-woman-hand.webp?b=1&s=170667a&w=0&k=20&c=Ig-R7LfcOKY1-lF5r5lCsqBDolV1rXEf5_rvy1MPhZo="
+                alt="">
+        </div>
+        <div class="txt">
+            <h2>For Employers</h2>
+            Using our Admin interface, you can easily create and edit job openings to attract top candidates. Manage
+            applications from a centralized dashboard, allowing you to review, filter, and evaluate applicants
+            efficiently. Make informed hiring decisions faster with our system, which also supports clear communication
+            through notifications and personalized messages, enhancing the recruitment experience.
+        </div>
+    </div>
+    <div class="card">
+        <div class="img">
+            <img src="https://images.unsplash.com/photo-1474403078171-7f199e9d1335?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjJ8fGxhcHRvcCUyMHNtaWxpbmd8ZW58MHx8MHx8fDA%3D"
+                alt="">
+        </div>
+        <div class="txt">
+            <h2>For Candidates</h2>
+            Our platform offers an easy and efficient way to search for job openings that match your skills and
+            interests. Browse detailed job listings, apply with a few clicks, and track your application status from
+            your personalized dashboard. Stay updated with timely notifications and messages, ensuring you never miss an
+            opportunity.
+        </div>
+    </div>
+</section>
+
+
+<section class="Steps" id="getting-started">
+    <div class="timeline">
+        <span class="circle activeCircle" data-step="Step-1"></span>
+        <span class="circle" data-step="Step-2"></span>
+        <span class="circle" data-step="Step-3"></span>
+        <div class="line"></div>
+    </div>
+    <div class="StepsContent">
+        <div class="content-1 content active">
+            <h1>Sign Up</h1>
+            <p>Create your free account to get started. Fill in your basic details and set up your profile to showcase
+                your skills and experiences. We do not misuse your personal data. Passwords are securely hashed before
+                being stored in the database, so that your account is safe from attacks</p>
+        </div>
+        <div class="content-2 content">
+            <h1>Search for Jobs</h1>
+            <p>With your account set up, you can straight away start searching for jobs that match your interests and
+                qualifications. Our intuitive search bar allows you to quickly find job openings by entering keywords
+                related to the position you seek. Use our advanced filter options to narrow down your search by job
+                category, location, company, and other criteria. Find the perfect job opportunities tailored to your
+                career goals. Save jobs that catch your interest and return to them later.</p>
+        </div>
+        <div class="content-3 content">
+            <h1>Apply Online</h1>
+            <p>Found a job that excites you? Each job listing has an "Apply Now" button that takes you to the
+                application form. Fill in your details and upload your resume to complete and submit your job
+                application. After submitting your application, you can track its status and view any updates from the
+                employer on your user dashboard. You will be notified if you application is accepted by the employer</p>
+        </div>
+    </div>
+</section>
+
+
+<script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+
+<script>
+
+    //-----------------------Parallax Effect For Hero Section--------------------------
+
+    const heroTxt = document.querySelector('.heroTxt');
+    const heroImg = document.querySelector('.heroImg');
+    window.addEventListener('scroll', () => {
+        if(/Mobi|Android/i.test(navigator.userAgent) || window.matchMedia("(max-width: 768px)").matches) return; // do not apply image parallax on small screens
+        const scrollPosition = window.scrollY;
+        // Make the heroTxt move at a faster scroll speed
+        heroTxt.style.transform = `translateY(-${scrollPosition * 0.7}px)`;
+        heroImg.style.setProperty('--scroll', `-${scrollPosition * 0.2}px`); //setting css variable allows ::before pseudo-element to move at a different speed using translateY
+    });
+
+
+    // ----------------------Timeline Interactions ----------------------
+
+    let line = document.querySelector('.line');
+    let circles = document.querySelectorAll('.circle');
+    let marginLeft = parseFloat(window.getComputedStyle(circles[0]).getPropertyValue('margin-left')); //margin-left is equal to margin-right
+    let spaceBetween = line.offsetWidth / (circles.length - 1);
+    spaceBetween -= 2 * marginLeft; //subtracting the margin offset of leftmost and rightmost circle from the 'space between'  to get the actual space between them
+
+    let lastIndex = 0; //keeps track of the last clicked circle's index (which also helps determine the direction in which the line will flow next)
+    //by default, first circle is active, whose index is 0
+
+    circles.forEach((circle, index) => {
+        circle.addEventListener('click', () => {
+            console.log('clicked circle');
+            circle.classList.add('activeCircle'); // make it active
+            circles[lastIndex].classList.remove('activeCircle'); //"deactivate" the previous active circle
+
+            contentSlideIn(lastIndex, index);
+            line.style.setProperty('--pseudo-line-width', `${marginLeft + index * (spaceBetween)}`); // [NOTE: for more than 3 circles, also add (2*border-width) for each circle to ensure correct measurements]
+            lastIndex = index;
+            console.log('changed line width is now:', line.style.getPropertyValue('--pseudo-line-width'));
+        });
+    });
+
+    function contentSlideIn(lastIndex, index) { // takes last circle's index and current circle's index
+        if (lastIndex === index) return;
+
+        const content = document.querySelector(`.content-${index + 1}`);
+        const lastContent = document.querySelector(`.content-${lastIndex + 1}`);
+
+        // this sliding animation pushes the "in-between" content elements to the left or right side of viewport, so that the lastContent slides directly to current content without any in-betweens.    
+
+        if (index > lastIndex) { //if timeline flowing right, swipe left
+            for (let i = lastIndex + 1; i < index; i++) { //push in-between content elements to the left
+                document.querySelector(`.content-${i + 1}`).style.transform = 'translateX(-100vw)';
+            }
+            lastContent.style.transform = 'translateX(-100vw)'; //push lastContent to the left (lastContent already has the 'active' class applied, so it will slide out with a smooth, visible transition, unlike the in-between elements).
+        }
+        else if (index < lastIndex) { //if timeline flowing left, swipe right
+            for (let i = index + 1; i < lastIndex; i++) { //push in-between content elements to the right
+                document.querySelector(`.content-${i + 1}`).style.transform = 'translateX(100vw)';
+            }
+            lastContent.style.transform = 'translateX(100vw)'; //push lastContent to the right (lastContent already has the 'active' class applied, so it will slide out with a smooth, visible transition, unlike the in-between elements).
+        }
+        content.classList.add('active'); //add 'active' class to current content element, so that it slides in with a smooth transition.
+        content.style.transform = 'translateX(0)'; // move it to the center of the viewport
+        setTimeout(() => {
+            lastContent.classList.remove('active'); //after lastContent has successfully slid out, remove the 'active' class from it.
+        }, 500);
+    }
+
+
+</script>
+
+{%endblock%}

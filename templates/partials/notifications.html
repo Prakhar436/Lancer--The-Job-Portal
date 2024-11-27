@@ -1,0 +1,38 @@
+{% if not list_of_notifications %} <!-- if empty list -->
+    <div class="noApps">
+        <h2>No Notifications Found</h2>
+        <p>The calm before the storm! No notifications now, but who knows what's brewing in the background?</p>
+    </div>
+    <img  src="static/images/no-notifications.svg" alt="">
+
+{% else %}
+{% for notification in list_of_notifications %}
+<div class="ac_card notifCard">
+    <div class="heading">
+        <img class="logo" src="{{ notification.secure_url }}" alt="Company logo" srcset="">
+        <div class="details">
+            <h2 class="h-{{notification.notification_type}}"> 
+                {% if notification.notification_type == 0 %}
+                    Application Rejected
+                {% elif notification.notification_type == 1 %}
+                    Application Accepted
+                {% elif notification.notification_type == 2 %}
+                    Application Withdrawn
+                {% endif %}
+            </h2>
+            <h3><strong>{{ notification.company }}</strong> {{ notification.location }} • ${{ notification.salary }} • {{ notification.work_environment }} • {{ notification.employment_type }} • {{ notification.experience }}</h3>
+        </div>
+    </div>
+    <p class="{% if notification.notification_type == 0 %}accepted{% elif notification.notification_type == 1 %}rejected{% elif notification.notification_type == 2 %}withdrawn{% endif %}">
+        {% if notification.notification_type == 0 %}
+        We appreciate your interest in <strong>{{notification.company}}</strong>. After careful consideration, we regret to inform you that your application for <strong>{{notification.title}}</strong> was not selected. We encourage you to apply in the future.        
+        {% elif notification.notification_type == 1 %}
+        Congratulations! Your application for the position of <strong>{{notification.title}}</strong> at <strong>{{notification.company}}</strong> has been accepted. We are excited about the possibility of working together. Thank you for your interest.
+        {% elif notification.notification_type == 2 %}
+        Your application for the position of <strong>{{notification.title}}</strong> at <strong>{{notification.company}}</strong> has been successfully withdrawn at your request. If you wish to reapply, visit the job posting again.{% endif %}
+    </p>     
+    <div class="date">Received on {{ notification.created_at.strftime('%d-%m-%Y') }}</div>
+</div>
+{% endfor %}
+
+{%endif%}

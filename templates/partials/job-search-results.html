@@ -1,0 +1,50 @@
+{% if not jobs %} <!-- if jobs list is empty -->
+<div class="noJobs">
+    <h2>No Jobs Found</h2>
+    <p>Try changing the filters or check back later</p>
+</div>
+{%endif%}
+
+<!-- otherwise: -->
+{%for job in jobs%}
+<div class="jobCard">
+    <div class="cardHeader">
+        <img src="{{job.secure_url}}" alt="" class="companyLogo">
+        <div class="info">
+            <h3>{{job.company}}</h3>
+            <h2>{{job.title}}</h2>
+        </div>
+        <svg class="bookmark {% if not logged_in %} disabled {% elif job.is_bookmarked %} bookmarked {%endif%}"
+       
+            hx-post='/bookmark-job/{{job.job_id}}' hx-trigger="click" hx-target="this" hx-swap="none" width="32px"
+            height="32px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <title>{%if not logged_in %} Please Login to bookmark this job {%else%} Bookmark this job for later {%endif%}</title>
+            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+            <g id="SVGRepo_iconCarrier">
+                <path
+                    d="M5 6c0-1.4 0-2.1.272-2.635a2.5 2.5 0 0 1 1.093-1.093C6.9 2 7.6 2 9 2h6c1.4 0 2.1 0 2.635.272a2.5 2.5 0 0 1 1.092 1.093C19 3.9 19 4.6 19 6v13.208c0 1.056 0 1.583-.217 1.856a1 1 0 0 1-.778.378c-.349.002-.764-.324-1.593-.976L12 17l-4.411 3.466c-.83.652-1.245.978-1.594.976a1 1 0 0 1-.778-.378C5 20.791 5 20.264 5 19.208V6z"
+                    stroke="#375ae6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="" />
+            </g>
+        </svg>
+    </div>
+    <hr>
+    <div class="positionDetails">
+        <div class="keypoints">
+            <div class="jobType" >{{job.employment_type}}</div>
+            <div class="experience">{{job.experience}}</div>
+            <div class="locationType">{{job.work_environment}}</div>
+        </div>
+        <div class="otherInfo">
+            <div class="salary"><img src="static/images/dollar.svg" alt=""> ${{job.salary}}</div>
+            <div class="location"> <img src="static/images/location.svg" alt="">{{job.location}}</div>
+            <div class="applications"> <img src="static/images/group3.svg" alt="">{{job.application_count}} applications</div>
+        </div>
+    </div>
+    <hr>
+    <div class="cardFooter">
+        <a href="job/{{job.job_id}}"><button>apply Now</button></a>
+        <div class="postingTime">{{job.posted_time}}</div>
+    </div>
+</div>
+{%endfor%}

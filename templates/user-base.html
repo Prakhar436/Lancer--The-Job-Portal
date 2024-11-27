@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Document{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    {% block head %}<!-- for importing webpage-specific files via CDN, such as HTMX -->{% endblock %}
+</head>
+
+<body class="Body scroll-disable"> <!-- 'scroll-disable' is used to disable scrolling during loader animation -->
+    {% include 'partials/navbar.html' %}
+
+    <!-- Page Loader Animation: -->
+    <div class="page-loader-wrapper">
+        <div class="user-page-loader"></div>
+    </div>
+
+    {% block content %} {% endblock %}
+
+    {%include 'partials/footer.html'%}
+
+    <script>
+
+        const body = document.body;
+
+        // --------------------Page Loader Animation ----------------------
+       window.addEventListener('load', () => {
+            const page_loader = document.querySelector('.page-loader-wrapper');
+            page_loader.classList.add('fade'); // fade out the loader over 1s
+            body.classList.remove('scroll-disable');
+            setTimeout(() => {
+                page_loader.style.display = 'none'; // hide the loader after fading out
+            }, 500);
+        });
+
+    // --------------------Mobile navbar script and Hamburger animation ----------------------
+
+        const hamburger = document.querySelector('.mobileNavToggle');
+        const overlay = document.querySelector('.overlay');
+
+        let navLinks = document.querySelector('.navLinks');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('animate');
+            navLinks.classList.toggle('showNavLinks');
+            overlay.classList.toggle('activate-overlay');
+            body.classList.toggle('scroll-disable');
+        });
+        // close the navbar when clicked outside (i.e., on the overlay, since overlay lies just behind the navbar and covers the whole screen)
+        overlay.addEventListener('click', () => {
+            if(overlay.classList.contains('activate-overlay')){
+                hamburger.classList.remove('animate');
+                navLinks.classList.remove('showNavLinks');
+                overlay.classList.remove('activate-overlay');
+                body.classList.remove('scroll-disable');
+            }
+        });
+        
+
+        // --------------------Profile Menu Script (For Larger Devices) ----------------------
+        if(document.querySelector('.userImg')){ // if profile-icon exists on the navbar
+            const profileMenuBtn = document.querySelector('.userImg').closest('a');
+            const profileMenu = document.querySelector('.profileMenu');
+            console.log('profileMenu: ', profileMenu);
+            profileMenuBtn.addEventListener('click', () => {
+                if(!profileMenu.open) profileMenu.show();
+                else profileMenu.close();
+            });
+            window.addEventListener('click', (event)=>{ //for all dialogs, if clicked outside the dialog while it's open, close it
+                    // check if dialog is open, click is outside the dialog, and click is not on the profileMenuBtn
+                    if (profileMenu.open && !profileMenu.contains(event.target) && !profileMenuBtn.contains(event.target)) {
+                        profileMenu.close();
+                    }
+                });
+            }
+        
+    </script>
+
+</body>
+</html>

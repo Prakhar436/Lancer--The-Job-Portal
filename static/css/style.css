@@ -5172,6 +5172,10 @@ dialog.job-modal .confirmBtn[data-action="open"]:hover{
 /*Note: ADMIN-EDIT-JOB.HTML uses the same table as ADMIN-CREATE-JOB, therefore its styles are present in ADMIN-CREATE-JOB section*/
 /* some additions and modifications: */
 
+.heading .back_arrow{
+    cursor: pointer;
+}
+
 .jobFormContainer .editJobForm button[type="submit"]{
     transition: background-color 0.3s !important;
 }    

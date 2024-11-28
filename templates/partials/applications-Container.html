@@ -1,0 +1,51 @@
+<!-- this partial template is used when switching between notifications and applications section in action-center  -->
+
+{% if not list_of_applications %} <!-- if empty list -->
+    <div class="noApps">
+        <h2>No Applications Found</h2>
+        <p>You currently have no job applications submitted. Explore available job opportunities to take the first step toward your next career move!</p>
+    </div>
+    <img  src="static/images/no-applications.svg" alt="">
+
+{% else %}
+<!-- sort buttons: -->
+<div class="sortBtn-grp">
+    <button class="active">All Applications</button>
+    <button>Under Review</button>
+    <button>Completed</button>
+</div>
+<!-- application cards: -->
+{% for application in list_of_applications %}
+        <div class="ac_card" id="application-{{application.application_id}}">
+            <div class="heading">
+                <img class="logo" src="{{application.company_logo}}" alt="" srcset="">
+                <div class="details">
+                    <h2>{{application.job_title}}</h2>
+                    <h3><strong>{{application.company}}</strong> {{application.location}} • ${{application.salary}} • {{application.work_environment}} • {{application.employment_type}} • {{application.experience}}</h3>
+                </div>
+            </div>
+            <div class="status">
+                {% if application.status == 'Pending' %}
+                <span class="under-review">Under Review</span>
+                {% elif application.status == 'Accepted' %}
+                <span class="accepted">Accepted</span>
+                {% else %}
+                <span class="rejected">Rejected</span>
+                {% endif %}
+            </div>
+            {% if application.status == 'Pending' %} <!--can only withdraw if application is still under review -->
+            <div class="withdraw">
+                <svg width="30px" height="30px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                    <g id="SVGRepo_bgCaredrediered" stredoke-width="0"/>
+                    <g id="SVGRepo_tredaceredCaredrediered" stredoke-linecap="redound" stredoke-linejoin="redound"/>
+                    <g id="SVGRepo_iconCaredrediered">
+                    <path d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z"/>
+                    </g>
+                    </svg>
+                    <span ><p>Withdraw Application</p> </span>
+            </div>
+            {%endif%}
+            <div class="date">Applied on {{application.date_applied}}</div>
+        </div>
+        {%endfor%}
+{%endif%}

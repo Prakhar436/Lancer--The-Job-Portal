@@ -1,0 +1,84 @@
+<!-- form for inline-editing personal details -->
+<div id="editFormContainer">
+    <h1>Personal Details</h1>
+    <!-- loading animation -->
+    <div class="loader htmx-indicator"  id="details-loader"></div>
+    <div class="btn-grp">
+        <!-- tick icon (confirm) : -->
+            <svg class="confirm" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"
+                stroke="#000000"
+                hx-put="/update/personal_details"
+                hx-trigger="click"
+                hx-target="#editFormContainer"
+                hx-swap="outerHTML"
+                hx-include="#editForm"
+                hx-indicator="#details-loader"
+                >
+                <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                <g id="SVGRepo_iconCarrier">
+                    <title />
+                    <g id="Complete">
+                        <g id="tick">
+                            <polyline fill="none" points="3.7 14.3 9.6 19 20.3 5" stroke="limegreen"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        <!-- cross icon (cancel) : -->
+        <svg class="cancel" width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            hx-get="/cancel/personal_details"
+            hx-target="#editFormContainer"
+            hx-swap="outerHTML"
+            hx-trigger="click"
+            >
+            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+            <g id="SVGRepo_iconCarrier">
+                <path d="M19 5L4.99998 19M5.00001 5L19 19" stroke="#FF6347" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </g>
+        </svg>
+    </div>
+    <div class="field-1">
+        <form hx-post="/update_profile" hx-target="#userInfo" hx-trigger="submit" id="editForm">
+            <div class="field-row">
+                <div>
+                    <label for="fname">First Name:</label>
+                    <input type="text" name="fname" id="fname" value="{{user_data.firstname | default('-', true)}}">
+                </div>
+                <div>
+                    <label for="lname">Last Name:</label>
+                    <input type="text" name="lname" id="lname" value="{{user_data.lastname | default('-', true)}}">
+
+                </div>
+                <div>
+                    <label for="phone">Phone:</label>
+                    <input type="tel" name="phone" id="phone" value="{{user_data.phone_number | default('-', true)}}">
+                </div>
+            </div>
+            <div class="field-row">
+                <div>
+                    <label for="email">Contact Email:</label>
+                    <input type="email" name="email" id="email" value="{{user_data.email | default('-', true)}}">
+                </div>
+                <div>
+                    <label for="city">City:</label>
+                    <input type="text" name="city" id="city" value="{{user_data.city | default('-', true)}}">
+                </div>
+                <div>
+                    <label for="country">Country:</label>
+                    
+                    <select id="country" name="country" class="form-control">
+                        <option value="" disabled {% if not user_data.country %}selected{% endif %}>Select</option>
+                        {%for country in countries%}
+                        <option value="{{country}}" {% if country.strip() == user_data.country %} selected {%endif%}>{{country}}</option>
+                        {%endfor%}
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

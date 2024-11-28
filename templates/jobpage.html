@@ -1,0 +1,109 @@
+{% extends 'user-base.html' %}
+
+{% block title%}
+JobPage
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <div class="container">
+        <div class="job_Description">
+            <div class="JDHeader">
+                <div class="logo"> <img src="{{job.secure_url}}" alt=""></div>
+                <div class="job_name">
+                    <h2>{{job.title}}</h2>
+                    <h3>{{job.company}}</h3>
+                </div>
+            </div>
+            <div class="JDContent">
+                <h3>Overview</h3>
+                {% for point in job.description.split('\n') %}
+                    <p>{{point}}</p>
+                    {% endfor %}
+                <!-- safe filter denotes that the data is in HTML and must render accordingly ( as description contains <p> tags)-->
+                <h3>Job Requirements</h3>
+                <ul>
+                    {% for requirement in job.requirements.split('\n') %}
+                    <li>{{requirement}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- apply button: -->
+             {% if job.has_applied == False%} <!--  if the user has not applied to the job, show apply button -->
+            <a href="/{{job.job_id}}/apply" class="apply"><button id="button">Apply Now</button></a> 
+            {% else %}
+            <button id="button" class="applied">
+                <?xml version="1.0" encoding="utf-8"?>
+                <svg width="26px" height="26px" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.89163 13.2687L9.16582 17.5427L18.7085 8" stroke="#00c853" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg> 
+                Applied</button>
+            {% endif %}
+        </div>
+        <div class="jobInfo">
+            <h3>Job Information</h3>
+            <hr>
+            <div>
+                <div class="infoPoint">
+                    <img src="/static/images/job_information/employment_type.svg" alt="">
+                    <div>
+                        <h3>Employment Type:</h3>
+                        <h4>{{job.employment_type}}</h4>
+                    </div>
+                </div>
+                <div class="infoPoint">
+                    <img src="/static/images/job_information/work-environment.svg" alt="">
+                    <div>
+                        <h3>Work Environment:</h3>
+                        <h4>{{job.work_environment}}</h4>
+                    </div>
+                </div>
+                <div class="infoPoint">
+                    <img src="/static/images/job_information/location.svg" alt="">
+                    <div>
+                        <h3>Location:</h3>
+                        <h4>{{job.location}}</h4>
+                    </div>
+                </div>
+                <div class="infoPoint">
+                    <img src="/static/images/job_information/experience.svg" alt="">
+                    <div>
+                        <h3>Experience:</h3>
+                        <h4>{{job.experience}}</h4>
+                    </div>
+                </div>
+                <div class="infoPoint">
+                    <img src="/static/images/job_information/salary.svg" alt="">
+                    <div>
+                        <h3>Salary:</h3>
+                        <h4>${{job.salary}}</h4>
+                    </div>
+                </div>
+                <div class="infoPoint">
+                    <img src="/static/images/job_information/date-posted.svg" alt="">
+                    <div>
+                        <h3>Date Posted:</h3>
+                        <h4>{{ job.created_at.strftime('%B %d, %Y') }}</h4>
+                    </div>
+                </div>
+
+                {%if job.updated_at != job.created_at%} <!-- if the job has been updated after posting, display the updated date -->
+                <div class="infoPoint">
+                    <img src="/static/images/job_information/date-updated.svg" alt="">
+                    <div>
+                        <h3>Date Updated:</h3>
+                        <h4>{{job.updated_at.strftime('%B %d, %Y')}}</h4>
+                    </div>
+                </div>
+                {%endif%}
+          
+            </div>
+
+        </div>
+    </div>
+</main>
+
+{%endblock%}

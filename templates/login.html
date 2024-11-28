@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LANCER | Sign In</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+</head>
+
+<body class="loginBody">
+
+<!-- Page loader animation: -->
+<div class="login-page-loader-wrapper">
+    <div class="login-page-loader"></div>
+</div>
+
+    <div class="tilted-Intro-Section {% if admin_side == True %} shifted {% endif %}">
+        <div class="intro">
+            <div class="lancer_logo">
+                 <!-- logo for larger screens -->
+                <img src="{{ url_for('static', filename='images/LANCER_logo.png') }}" alt="logo">
+                <p>LANCER</p>
+            </div>
+            <h1>Where Talent Meets Opportunity</h1>
+            <p>Step into a career where potential becomes achievement</p>
+            <div class="admin-link">
+                <p>Are you{% if admin_side == True %} a User {%else%} an Admin {% endif%}? </p> <span>Click Here</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="tiltedBgLeft {% if admin_side == True %} overlap {% endif %}">
+        <div class="lancer_logo mobile-lancer-logo hidden"> <!-- logo for mobile devices only, remains hidden on larger screens -->
+            <img src="{{ url_for('static', filename='images/LANCER_logo.png') }}" alt="logo">
+            <p>LANCER</p>
+        </div>
+        <div class="admin {% if admin_side == True %} overlap {% endif %}">
+            <div class="box">
+                <div class="heading">
+                    <h2>Admin Login</h2>
+                </div>
+                <form class="loginForm" method="post" action="/adminLogin">
+                    <div>
+                        <label for="Admin-Email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="Admin-Email" placeholder="abc@gmail.com"
+                            aria-describedby="emailHelp" name="email" required>
+                    </div>
+                    <div class="password-wrapper">
+                        <label for="Admin-Password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="Admin-Password" name="password" required>
+                        <!-- eye open svg  -->
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z"
+                                    stroke="black" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path
+                                    d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                                    stroke="black" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </g>
+                        </svg>
+                        <!-- eye closed svg  -->
+                        <svg width="20px" height="20px" class="hidden" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M20 14.8335C21.3082 13.3317 22 12 22 12C22 12 18.3636 5 12 5C11.6588 5 11.3254 5.02013 11 5.05822C10.6578 5.09828 10.3244 5.15822 10 5.23552M12 9C12.3506 9 12.6872 9.06015 13 9.17071C13.8524 9.47199 14.528 10.1476 14.8293 11C14.9398 11.3128 15 11.6494 15 12M3 3L21 21M12 15C11.6494 15 11.3128 14.9398 11 14.8293C10.1476 14.528 9.47198 13.8524 9.1707 13C9.11386 12.8392 9.07034 12.6721 9.04147 12.5M4.14701 9C3.83877 9.34451 3.56234 9.68241 3.31864 10C2.45286 11.1282 2 12 2 12C2 12 5.63636 19 12 19C12.3412 19 12.6746 18.9799 13 18.9418"
+                                    stroke="black" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </g>
+                        </svg>
+                    </div>
+                    <input type="hidden" name="next" value="{{ request.args.get('next', '') }}"> <!-- for redirecting to the page the admin was trying to access before logging in -->
+                    {% for message in get_flashed_messages(category_filter=['admin-failed']) %}
+                    <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                        {{message}}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="submitBtn">Sign In</button>
+                </form>
+            </div>
+        </div>
+        <div class="admin-link mobile-admin-link hidden"> <!-- Admin link for mobile-devices, remains hidden on larger devices -->
+            <p>Are you an Admin? </p> <span>Click Here</span>
+        </div>
+    </div>
+    <div class="tiltedBgRight">
+        <div class="user {% if admin_side == True %} overlap {% endif %}">
+            <div class="box">
+                <div class="heading">
+                    <h2>User Login</h2>
+                </div>
+                <form class="loginForm" method="post" action="/userLogin">
+                    <div>
+                        <label for="User-Email" class="form-label">Email address</label>
+                        <input type="email" name="email" class="form-control" id="User-Email"
+                            placeholder="abc@gmail.com" aria-describedby="emailHelp" required>
+                    </div>
+                    <div class="password-wrapper">
+                        <label for="User-Password" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="User-Password" required>
+                        <!-- eye open svg: -->
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z"
+                                    stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path
+                                    d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                                    stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </g>
+                        </svg>
+                        <!-- eye closed svg  -->
+                        <svg width="20px" class="hidden" height="20px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M20 14.8335C21.3082 13.3317 22 12 22 12C22 12 18.3636 5 12 5C11.6588 5 11.3254 5.02013 11 5.05822C10.6578 5.09828 10.3244 5.15822 10 5.23552M12 9C12.3506 9 12.6872 9.06015 13 9.17071C13.8524 9.47199 14.528 10.1476 14.8293 11C14.9398 11.3128 15 11.6494 15 12M3 3L21 21M12 15C11.6494 15 11.3128 14.9398 11 14.8293C10.1476 14.528 9.47198 13.8524 9.1707 13C9.11386 12.8392 9.07034 12.6721 9.04147 12.5M4.14701 9C3.83877 9.34451 3.56234 9.68241 3.31864 10C2.45286 11.1282 2 12 2 12C2 12 5.63636 19 12 19C12.3412 19 12.6746 18.9799 13 18.9418"
+                                    stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </g>
+                        </svg>
+                    </div>
+                    <input type="hidden" name="next" value="{{ request.args.get('next', '') }}"> <!-- for redirecting to the page the user was trying to access before logging in -->
+
+                    {% for message in get_flashed_messages(category_filter=['user-failed']) %}
+                    <div id="" class="invalid-feedback">
+                        {{message}}
+                    </div>
+                    {% endfor %}
+                    <div class="card-footer">
+                        <div class="links">
+                            Don't have an account? <a href="register">Sign Up</a>
+                        </div>
+                    </div>
+                    <button type="submit" class="submitBtn">Sign In</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+<script>
+
+    //Page Loader animation:
+    const loadStartTime = Date.now(); // record the script start time to ensure the laoder runs for atleast 1sec
+    window.addEventListener('load', () => {
+        const elapsedTime = Date.now() - loadStartTime;
+        const minimumVisibleTime = 1000; // 1 second in milliseconds
+        const remainingTime = minimumVisibleTime - elapsedTime;
+        setTimeout(() => {
+            document.querySelector('.login-page-loader-wrapper').classList.add('fade');
+            setTimeout(() => {
+                document.querySelector('.login-page-loader-wrapper').style.display = 'none';
+            }, 500); 
+        }, Math.max(remainingTime, 0));
+    });
+
+    //Admin link for larger screens (Shifting the Intro-Section):
+    document.querySelector('.intro > .admin-link span').addEventListener('click', () => {
+        document.querySelector('.tilted-Intro-Section').classList.toggle('shifted');
+
+        if(document.querySelector('.tilted-Intro-Section').classList.contains('shifted')){
+            document.querySelector('.intro > .admin-link p').textContent = 'Are you a User?';
+        } else {
+            document.querySelector('.intro > .admin-link p').textContent = 'Are you an Admin?';
+        }
+    });
+    //Admin link for mobile devices (Moving the Admin-section over the User-section):
+    document.querySelector('.mobile-admin-link > span').addEventListener('click', () => {
+        document.querySelector('.admin').classList.toggle('overlap');
+        document.querySelector('.user').classList.toggle('overlap');
+        document.querySelector('.tiltedBgLeft').classList.toggle('overlap'); // for changing the background color
+        if(document.querySelector('.admin').classList.contains('overlap')){
+            document.querySelector('.mobile-admin-link > p').textContent = 'Are you a User?';
+        } else {
+            document.querySelector('.mobile-admin-link > p').textContent = 'Are you an Admin?';
+        }
+    });
+
+    // view-password button:
+    document.querySelectorAll('.password-wrapper svg:first-of-type').forEach((eye) => {
+        eye.addEventListener('click', () => {
+            eye.classList.add('hidden');
+            eye.nextElementSibling.classList.remove('hidden');
+            const input = eye.previousElementSibling;
+                input.type = 'text';
+        });
+    });
+    console.log(document.querySelectorAll('.password-wrapper svg:first-of-type'));
+    document.querySelectorAll('.password-wrapper svg:last-child').forEach((eye) => {
+        eye.addEventListener('click', () => {
+            eye.classList.add('hidden');
+            eye.previousElementSibling.classList.remove('hidden');
+            const input = eye.previousElementSibling.previousElementSibling;
+                input.type = 'password';
+        });
+    });
+
+</script>
+</body>
+
+</html>

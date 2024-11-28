@@ -1,0 +1,257 @@
+{%extends 'user-base.html' %}
+{% block title %}Bookmarked Jobs{%endblock%}
+{%block head %}
+<script src="https://unpkg.com/htmx.org@2.0.0"
+    integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw"
+    crossorigin="anonymous"></script>
+{%endblock%}
+{%block content%}
+
+<!-- POPUP FOR ERRORS: -->
+<div class="popupContainer">
+    <div class="popup error">
+        <span></span>
+        <button class="close">&#10005;</button>
+    </div>
+</div>
+
+<!-- modal for confirmation: -->
+<dialog class="modal">
+    <h2>Confirm</h2>
+    <p> <!-- filled dynamically by JS --> </p>
+    <div class="modalActions">
+        <button class="cancelBtn">Cancel</button>
+        <button class="confirmBtn" hx-post="" hx-target="" hx-trigger="click">
+            Confirm</button>
+    </div>
+</dialog>
+
+<header class="bmj_Header">
+    <h1>Bookmarked Jobs</h1>
+</header>
+
+<div class="bmj_container">
+    <aside class="filterBox bmj_filterBox">
+        <form action="" hx-get="/searchBookmarkedJobs" hx-target="#search-results" hx-trigger="change"
+            hx-include=".searchbar>input">
+            <div class="heading">
+                <div class="title">Filters</div>
+                <div class="clear actionBtns">
+                    <!-- reset button needs to send hx-get to a different route, otherwise it will be included in the args everytime the form sends hx-get and the form will keep resetting instead of returning filtered data-->
+                    <!-- also note that due to hx-attributes, clicking the button does NOT reset the form, so the form is reset using JS -->
+                    <button type="reset" name="clear_filters" hx-get="/searchBookmarkedJobs" hx-trigger="click"
+                        hx-target="#search-results" hx-include=".searchbar>input" disabled>Reset</button>
+                    <button class="close" type="button">Close</button> <!-- closes the filterbox for mobile devices -->
+                </div>
+            </div>
+            <hr>
+            <div class="radio-group">
+                <h4>Sort By</h4>
+                <input type="radio" checked id="option1" name="sort_by" value="relevance">
+                <label for="option1">Most Relevant</label><br>
+
+                <input type="radio" id="option2" name="sort_by" value="date_posted">
+                <label for="option2">Most Recent</label><br>
+
+                <input type="radio" id="option3" name="sort_by" value="salary">
+                <label for="option3">Top Salary</label><br>
+            </div>
+            <hr>
+            <div class="location">
+                <h4>Location</h4>
+
+                <div class="row">
+                    <div class="element">
+                        <input type="checkbox" name="location" value="remote" id="Remote">
+                        <label for="Remote">Remote</label>
+                    </div>
+                    <div class="element">
+                        <input type="checkbox" name="location" value="onsite" id="Onsite">
+                        <label for="Onsite">Onsite</label>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="employment-type">
+                <h4>Employment Type</h4>
+                <div class="row">
+                    <div class="element">
+                        <input type="checkbox" name="employment-type" value="full-time" id="Full-time">
+                        <label for="Full-time">Full-time</label>
+                    </div>
+                    <div class="element">
+                        <input type="checkbox" name="employment-type" value="part-time" id="Part-time">
+                        <label for="Part-time">Part-time</label>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="element">
+                        <input type="checkbox" name="employment-type" value="internship" id="Internship">
+                        <label for="Internship">Internship</label>
+                    </div>
+                    <div class="element">
+                        <input type="checkbox" name="employment-type" value="freelance" id="Freelance">
+                        <label for="Freelance">Freelance</label>
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+            <div class="radio-group">
+                <h4>Date of Posting</h4>
+                <div class="row">
+                    <div class="element">
+                        <input type="radio" id="option1" name="posting-date" value="today">
+                        <label for="option1">Today</label>
+                        <br>
+                    </div>
+                    <div class="element">
+                        <input type="radio" id="option2" name="posting-date" value="this-week">
+                        <label for="option2">This week</label>
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="element">
+                        <input type="radio" id="option3" name="posting-date" value="this-montth">
+                        <label for="option3">This Month</label><br>
+                    </div>
+                    <div class="element">
+                        <input type="radio" id="option4" name="posting-date" value="this-year">
+                        <label for="option4">This Year</label><br>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="experience">
+                <h4>Experience</h4>
+                <div class="row">
+                    <div class="element">
+                        <input type="checkbox" name="experience" value="entry-level" id="Entry-level">
+                        <label for="Entry-level">Entry-level</label>
+                    </div>
+                    <div class="element">
+                        <input type="checkbox" name="experience" value="1plus" id="one-yr">
+                        <label for="one-yr">1+ years</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="element">
+                        <input type="checkbox" name="experience" value="3plus" id="three-yrs">
+                        <label for="three-yrs">3+ years</label>
+                    </div>
+                    <div class="element">
+                        <input type="checkbox" name="experience" value="5plus" id="five-yrs">
+                        <label for="five-yrs">5+ years</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </aside>
+
+    <main class="bmj_Main">
+        <div class="searchAndFilter">
+            <button class="mobileFilterBox"> <!-- Filter button for mobile devices -->
+                Filters &#9660;
+            </button>
+            <div class="searchbar">
+                <input type="search" name="search" id="" placeholder="Start Typing To Search"
+                    hx-get="/searchBookmarkedJobs" hx-trigger="input changed delay:500ms, search"
+                    hx-target="#search-results" hx-swap="innerHTML" hx-include=".filterBox>form">
+                <!-- hx-include=".filterBox>form" considers applied filters while searching -->
+            </div>
+        </div>
+        <section class="jobContainer" id="search-results">
+            {% include 'partials/bookmarked-results.html' %}
+        </section>
+    </main>
+
+</div>
+
+<script>
+
+    const modal = document.querySelector('.modal');
+    const jobContainer = document.querySelector('.jobContainer');
+    jobContainer.addEventListener('click', (e) => { //event delegation, because the job_cards are dynamically loaded (and any event listeners applied on them directly would be lost in case of reswapping)
+        if (e.target.closest('.removeBM')) { // else check if clicked element is a removeBM button (to setup the confirmation modal)
+            setupModal(e.target.closest('.removeBM'));
+            modal.showModal();
+        }
+    });
+
+    //modal script
+    const cancelBtn = document.querySelector('.cancelBtn');
+    const confirmBtn = document.querySelector('.confirmBtn');
+    cancelBtn.addEventListener('click', () => {
+        modal.close();
+    });
+    confirmBtn.addEventListener('click', () => {
+        modal.close();
+    });
+
+
+    function setupModal(removeBM_btn) {
+        const bmj_card = removeBM_btn.closest('.bmj_card'); //find the bmj_card for which the button was clicked
+        const job_id = bmj_card.id.replace('job-', ''); //get the job id for the AJAX request using hx-post
+        modal.querySelector('p').innerHTML = `Are you sure you want to remove this bookmark?`;
+        confirmBtn.setAttribute('hx-post', `/bookmark-job/${job_id}`);
+        confirmBtn.setAttribute('hx-target', `#job-${job_id}`);
+        confirmBtn.setAttribute('hx-swap', 'outerHTML swap:0.6s'); //replaces the entire .bmj_card with 0.6s delay to allow animation to play
+        htmx.process(confirmBtn); //without process(), the hx-attributes are not updated
+    }
+
+    //htmx-response handler for remove-bookmark request:
+    confirmBtn.addEventListener('htmx:afterRequest', (event) => {
+        if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+            // eat 5 star, do nothing      
+        } else {
+            // Error response
+            const popup = document.querySelector('.popupContainer');
+            const response = JSON.parse(event.detail.xhr.responseText); //extract and log the error
+            console.log('error: ', response.error);
+            popup.querySelector('.popup.error > span').innerText = 'Error occurred while removing bookmark';
+            popup.classList.add('show');
+            popup.querySelector('.popup.error > button').addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+        }
+
+    });
+
+    // Filter Button for mobile devices:
+     const mobileFilterBox = document.querySelector('.mobileFilterBox');
+     const filterBox = document.querySelector('.filterBox');
+     const closeFilterBtn = filterBox.querySelector('.actionBtns .close');
+     mobileFilterBox.addEventListener('click', () => {
+         console.log('added show class');
+         filterBox.classList.add('show');
+         body.classList.add('scroll-disable-2'); //use another scroll-disable class to not conflict with scroll-disable of mobile navbar
+ 
+     });
+     closeFilterBtn.addEventListener('click', () => {
+         filterBox.classList.remove('show');
+         body.classList.remove('scroll-disable-2'); //use another scroll-disable class to not conflict with scroll-disable of mobile navbar
+     });
+ 
+
+    const filter_form = document.querySelector('.filterBox form');
+    const resetButton = filter_form.querySelector('button[type="reset"]');
+
+    filter_form.addEventListener('change', function () {
+        // by default, 'sort by relevance' is checked, so if ANY OTHER radio button is checked or any checkbox is checked, enable the reset button
+        // if querySelector returns an element, its value is truthy, otherwise falsy
+        if (filter_form.querySelector('input[type="radio"]:checked').value != 'relevance' || filter_form.querySelector('input[type="checkbox"]:checked')) {
+            resetButton.disabled = false;
+        }
+        // if both conditions were false, it means the change was either caused by unchecking the last checked checkbox, or by checking the 'relevance' radio button. In either case, form is back to its original state, so disable the reset button
+        else resetButton.disabled = true;
+    });
+
+    resetButton.addEventListener('click', function () {
+        resetButton.disabled = true; /*disable button after it resets the filter form*/
+        filter_form.reset();
+    });
+
+</script>
+{%endblock%}

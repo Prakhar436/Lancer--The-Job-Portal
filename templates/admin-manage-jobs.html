@@ -1,0 +1,181 @@
+<!-- POPUP FOR ERRORS: -->
+<div class="popupContainer">
+    <div class="popup error">
+        <span></span>
+        <button class="close">&#10005;</button>
+    </div>
+</div>
+
+<!-- modal for confirmation: -->
+<dialog class="modal job-modal">
+    <h2>Confirm</h2>
+    <p> <!-- filled dynamically by JS --> </p>
+    <div class="modalActions">
+        <button class="cancelBtn">Cancel</button>
+        <button class="confirmBtn" data-action="" hx-post="" hx-target="" hx-trigger="click">
+            <!-- filled dynamically by JS --></button>
+    </div>
+</dialog>
+
+
+<h1 class="heading">Manage Jobs</h1>
+
+<div class="tableContainer">
+    <div class="tableHeader">
+            <div class="btn-group job-status-grp" 
+            hx-get="/searchJobsTable" 
+            hx-target=".dataTable tbody" 
+            hx-vals=""
+            hx-trigger=""
+            hx-include="input[type='search']" > <!-- include the search input in the filter request. Also, hx-vals and hx-trigger filled dynamically via JS -->
+                <button class="btn active" data-filter="All-jobs">All Jobs</button>
+                <button class="btn" data-filter="open">Open</button>
+                <button class="btn" data-filter="closed">Closed</button>
+            </div>
+
+            <!-- btn-group as a dropdown for mobile devices: -->
+            <select class="mobile-btn-group" 
+            hx-get="/searchJobsTable" 
+            hx-target=".dataTable tbody" 
+            hx-vals=""
+            hx-trigger="change"
+            hx-include="input[type='search']" > <!-- include the search input in the filter request. Also, hx-vals and hx-trigger filled dynamically via JS -->
+                <option class="btn active" value="All-jobs">All Jobs</option>
+                <option class="btn" value="open">Open</option>
+                <option class="btn" value="closed">Closed</option>
+            </select>
+
+        <input type="search" name="search" 
+        hx-get="/searchJobsTable" 
+        hx-trigger="input changed delay:500ms, search" 
+        hx-target=".dataTable tbody" 
+        hx-vals = "" 
+        placeholder="search..."> <!-- include the active filter value using hx-vals (filled dynamically by JS)-->
+    </div>
+    <div class="tableWrapper">
+        <table class="dataTable">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Salary</th>
+                    <th>Type</th>
+                    <th>Work Environment</th>
+                    <th>Posting Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% include 'partials/jobs-table-results.html' %}
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module">
+    //MODAL SCRIPT:
+    const table = document.querySelector('.dataTable'); 
+    const modal = document.querySelector('dialog');
+    const cancelBtn = document.querySelector('.cancelBtn');
+    const confirmBtn = document.querySelector('.confirmBtn');
+
+    table.addEventListener('click', (event) => { //Event Delegation: since table rows are dynamically added with dynamic searchbar, we would have had to re-assign event listeners to their delete/reOpen buttons each time the table is updated. Instead, the event listener is assigned to the constant ancestor <table> which is always present and handles the click events for its rows' buttons
+
+        const button = event.target.closest('button'); //'closest' helps find the closest ancestor 'button' of the element
+        if(button && (button.classList.contains('closeJob') || button.classList.contains('reOpenJob'))) { //if 'button' is not null then the clicked element is indeed a button or its inner element, and so check if it's the delete button
+            setupModal(button);
+            modal.showModal();
+        }
+    });
+    
+    cancelBtn.addEventListener('click', () => {
+        modal.close();
+    });
+    confirmBtn.addEventListener('click', () => {
+        modal.close();
+    });
+
+    function setupModal(btn) {
+        let action; // action to be performed
+        if (btn.classList.contains('closeJob')) action = 'close';
+        else if (btn.classList.contains('reOpenJob')) action = 'open';
+
+        const row = btn.closest('tr'); //find the row for which the button was clicked
+        const job_id = row.id.replace('row-', ''); //get the job id for the AJAX request using hx-post
+        const cells = row.children;
+        const jobTitle = cells[0].textContent; // get row details
+        const company = cells[1].textContent;
+        const activeFilter = document.querySelector('.btn-group > .active').getAttribute('data-filter');
+        let confirmation_message;
+        
+        if(action ==='close') {
+            confirmation_message = `Are you sure you want to close the job opening for <strong>${jobTitle}</strong> at <strong>${company}</strong>? <br> <br>
+            Please note that this action will automatically <span>REJECT</span> all pending applications (if any). This job opening can be reopened later as a new listing if needed. The job details will remain accessible for future reference.`;
+        } 
+        else if(action ==='open') {
+            confirmation_message = `Are you sure you want to re-open the job opening for <strong>${jobTitle}</strong> at <strong>${company}</strong>? <br><br>
+            This will make the job opening available for applications again, and the posting date will be updated to the current date.`;
+        }
+        modal.querySelector('p').innerHTML = confirmation_message;
+        confirmBtn.setAttribute('data-action', action); // used by CSS to apply appropriate color to the button
+        if(action==='open') confirmBtn.innerHTML = 'Re-Open Job';
+        else confirmBtn.innerHTML = 'Close Job';
+        
+        confirmBtn.setAttribute('hx-post', `/updateJobStatus/${job_id}/${activeFilter}/${action}`);
+        confirmBtn.setAttribute('hx-target', `#row-${job_id}`); 
+        confirmBtn.setAttribute('hx-swap', 'outerHTML swap:0.4s'); //replaces the entire .status <td>
+        htmx.process(confirmBtn); //without process(), the hx-attributes are not updated
+    }
+
+    //MODAL HTMX RESPONSE HANDLER:
+    confirmBtn.addEventListener('htmx:afterRequest', (event) => { // check the reponse for success or error
+        if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+            return; //do nothing
+        } else {
+            // Error response
+            const popup = document.querySelector('.popupContainer');
+            const errorResponse = JSON.parse(event.detail.xhr.responseText); //extract and log the error
+            console.log('error: ', errorResponse.error);
+            popup.querySelector('.popup.error > span').innerHTML = 'error occurred while updating status';
+            popup.classList.add('show');
+            popup.querySelector('.popup.error > button').addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+        }
+    });
+
+    //FILTER SCRIPT:
+    //for larger devices:
+    const filterBtns = document.querySelectorAll('div.btn-group > .btn');
+    const filterGrp = document.querySelector('div.btn-group');
+    let tableRows = document.querySelectorAll('tbody tr');
+    let searchbar = document.querySelector('input[type="search"]');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            event.preventDefault(); //prevent htmx request for now
+            event.stopPropagation(); //stop the event from bubbling up
+            if (btn.classList.contains('active')) return; //if the clicked button is already active, do nothing
+            //otherwise:
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active'); //activate the clicked button and deactivate any previously active button
+            status = btn.getAttribute('data-filter');
+            //hx-vals helps to pass the filter value to the server
+            filterGrp.setAttribute('hx-vals', JSON.stringify({ filter: status })); //set hx-vals for btn-grp
+            searchbar.setAttribute('hx-vals', JSON.stringify({ filter: status })); //set hx-vals for searchbar, for future use
+            htmx.trigger(filterGrp, 'click'); //trigger the click event on the btn-grp to send AJAX request 
+        });
+    });
+
+    //for mobile devices:
+        const mobileFilterGrp = document.querySelector('.mobile-btn-group');
+        // Listen for HTMX's configRequest event (allows us to configure the request before it's sent, a much more cleaner approach than what we did for 'larger devices')
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            if (event.target === mobileFilterGrp) {
+                // Get the selected value from the dropdown
+                const selectedValue = mobileFilterGrp.value;
+                // Dynamically add `filter` to the request's values
+                event.detail.parameters.filter = selectedValue;
+            }
+        });  
+    
+</script>

@@ -1,0 +1,201 @@
+<h1 class="heading"> Manage Jobs / Edit : </h1>
+
+<div class="popup">
+    <span> <!-- filled dynamically by JS --> </span>
+    <button class="close">&#10005;</button>
+</div>
+
+<div class="jobFormContainer">
+    <form hx-post="/updateJobData/{{job.job_id}}" hx-trigger="submit" hx-swap="none" class="editJobForm" enctype="multipart/form-data">
+        <div class="row">
+            <div>
+                <label for="title">Job Title:</label>
+                <input type="text" placeholder="Backend Developer" id="title" name="title" value="{{job.title}}" required>
+            </div>
+            <div>
+                <label for="company">Company:</label>
+                <input type="text" placeholder="Deloitte" id="company" name="company" value="{{job.company}}" required>
+            </div>
+            <div>
+                <label for="employmentType">Employment Type:</label>
+                <select id="employmentype" name="employment_type" required>
+                    <option value="" disabled {% if not job.employment_type %}selected{% endif %}>Select</option>
+                    <option value="Full-Time" {% if job.employment_type == 'Full-Time' %}selected{% endif %}>Full Time</option>
+                    <option value="Part-Time" {% if job.employment_type == 'Part-Time' %}selected{% endif %}>Part Time</option>
+                    <option value="Freelance" {% if job.employment_type == 'Freelance' %}selected{% endif %}>Freelance</option>
+                    <option value="Internship" {% if job.employment_type == 'Internship' %}selected{% endif %}>Internship</option>
+                </select>
+            </div>
+    </div>
+    <div class="row">
+        <div>
+            <label for="workEnvironment">Work Environment:</label>
+            <select id="workEnvironment" name="work_environment" required>
+                <option value="" disabled {% if not job.work_environment %}selected{% endif %}>Select</option>
+                <option value="Remote" {% if job.work_environment == 'Remote' %}selected{% endif %}>Remote</option>
+                <option value="Onsite" {% if job.work_environment == 'Onsite' %}selected{% endif %}>Onsite</option>
+            </select>
+        </div>
+        <div>
+            <label for="location" id="locationLabel" required>Location:</label>
+            <input type="text" placeholder="Hyderabad, India" id="location" name="location" value="{{job.location}}"  required>
+        </div>
+        <div>
+            <label for="experience">Experience:</label>
+            <select id="experience" name="experience" required>
+                <option value="" disabled {% if not job.experience %}selected{% endif %}>Select</option>
+                <option value="Entry-level" {% if job.experience == 'Entry-level' %}selected{% endif %}>Entry-level</option>
+                <option value="1+ Years" {% if job.experience == '1+ Years' %}selected{% endif %}>1+ years</option>
+                <option value="3+ Years" {% if job.experience == '3+ Years' %}selected{% endif %}>3+ years</option>
+                <option value="5+ Years" {% if job.experience == '5+ Years' %}selected{% endif %}>5+ years</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div>
+            <label for="salary">Salary:</label>
+            <input type="number" placeholder="Enter Salary in USD" id="salary" name="salary" value="{{job.salary}}" required>
+        </div>
+        <div class="company-logo-update">
+            <label for="logo">Company Logo: <span class="msg"> file types:- svg, png, jpg, jpeg</span></label>
+            <div class="logos-wrapper">
+                <div class="current_logo">
+                    <img src="{{job.secure_url}}" alt="">
+                </div>
+                <input type="file" name="updated_logo" id="logo">
+            </div>
+            <div class="invalid-feedback"> <!-- filled dynamically by JS --> </div>
+        </div>
+    </div>
+    <div class="row">
+        <div>
+            <label for="description">Job Description:</label>
+            <textarea placeholder="Enter Job Description
+            Enter Job Description
+
+Paragraph 1: Overview of the role and key responsibilities.
+Paragraph 2: Detailed description of daily tasks and expectations.
+Paragraph 3: Information about the team, work environment, and company culture." id="description" name="description" required> {{job.description}}</textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div>
+            <label for="requirements">Job Requirements:</label>
+            <textarea placeholder="Enter Job Requirements, each on a new line. For Example:
+
+Requirement 1
+Requirement 2
+Requirement 3" id="requirements" name="requirements"
+                required> {{job.requirements}}</textarea>
+        </div>
+    </div>
+    <button type="submit" id="button" disabled>Submit Form</button> <!-- button is enabled only if changes are made -->
+
+    </form>
+</div>
+
+<script type="module">
+
+    //DISABLING LOCATION INPUT FIELD IF WORK ENVIRONMENT IS REMOTE:
+
+    const locationInput = document.getElementById('location');
+    const label = document.getElementById('locationLabel');
+
+    document.addEventListener('DOMContentLoaded', function () { //when data is loaded, check if the work_environment is remote, and set the location label to 'greyscale'
+        if (document.getElementById('workEnvironment').value === 'Remote') {
+            locationInput.disabled = true;
+            label.style.filter = 'grayscale(1)';
+        }
+    });
+    document.getElementById('workEnvironment').addEventListener('change', function () {
+        if (this.value == 'Remote') {
+            locationInput.value = 'Anywhere with Wi-Fi';
+            locationInput.disabled = true; //filter: grayscale(1) for disabled input fields is given in CSS
+            label.style.filter = 'grayscale(1)'; //make the label gray as well
+        } else {
+            locationInput.disabled = false;
+            if (locationInput.value === 'Anywhere with Wi-Fi') {
+                locationInput.value = '';
+            }
+            label.style.filter = 'grayscale(0)';
+        }
+    });
+
+    //POPUP MESSAGE FOR SUCCESS OR ERROR:
+    
+    let popup = document.querySelector('.popup');
+    let closeBtn = document.querySelector('.close');
+    window.addEventListener('load', () => {
+        if (popup != null) { //if flash messages exist
+            popup.classList.add('show');
+            closeBtn.addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+        }
+    }); 
+
+    //MAINTAINING FORM STATE TO TRACK CHANGES AND ENABLE/DISABLE SUBMIT BUTTON:
+
+    const form = document.querySelector(".editJobForm");
+    const submitButton = document.querySelector("button[type=submit]"); 
+    const initialData = {};  // Store initial values of form fields
+    Array.from(form.elements).forEach(element => {
+        if (element.name) {
+            initialData[element.name] = element.value;
+        }
+    });
+
+    let isChanged = false; // flag to track changes in form fields   
+    function handleFieldChange(event) { // checks for changes in a particular form element
+        const element = event.target;
+        console.log(element.name, 'changed');
+        // Check if this particular element has changed from its initial value
+        if (element.name && initialData[element.name] !== element.value) {
+            isChanged = true;
+        } else {
+            // Reset `isChanged` if no changes in ANY fields
+            isChanged = Array.from(form.elements).some(el => el.name && initialData[el.name] !== el.value);
+        }
+        // Enable or disable submit button based on changes
+        submitButton.disabled = !isChanged;
+    }
+    // Attach 'change' event listener to each form field
+    Array.from(form.elements).forEach(element => {
+        if (element.name) {
+            element.addEventListener("input", handleFieldChange);
+        }
+    });
+
+    //HTMX RESPONSE HANDLER:
+
+    document.querySelector('form').addEventListener('htmx:afterRequest', (event) => { // check the reponse for success or error
+        const response = JSON.parse(event.detail.xhr.responseText); //extract and show the response
+        const status = event.detail.xhr.status;
+        console.log('message: ', response.message);
+
+        if ((status >= 200 && status < 300) || (status >= 500)) { // show the response in the popup
+            let popup = document.querySelector('.popup');
+            let closeBtn = popup.querySelector('.close');
+            popup.classList.remove('error', 'success'); // remove any previous classes added during previous responses
+            if(status >= 200 && status < 300)
+                popup.classList.add('success');
+            else if(status >= 500)
+                popup.classList.add('error');
+            popup.querySelector('.popup > span').innerText = response.message;
+            popup.classList.add('show');
+            closeBtn.addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+            popup.scrollIntoView({ behavior: 'smooth', block: 'center'}); // auto-scroll to the popup
+        } 
+        else if(status >= 400 && status < 500) { // invalid-file input response, show in the form itself
+            const invalid_msg = document.querySelector('.invalid-feedback');
+            document.querySelector('input[type="file"]').addEventListener('change', () => { // clear the invalid-feedback when the file input changes
+                invalid_msg.innerText = '';
+            });
+            invalid_msg.innerText = response.message;
+            invalid_msg.scrollIntoView({ behavior: 'smooth', block: 'center' }); // auto-scroll to the invalid-feedback
+        }
+    });
+
+</script>

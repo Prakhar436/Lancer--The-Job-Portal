@@ -1,0 +1,132 @@
+<nav class="navigationBar">
+    <!-- navbar css at 'static/css/style.css' from line 444
+                navbar js at 'user-base.html' starting from line 21. -->
+    <a href="/" class="BrandName">
+        <div class="lancer_logo">
+            <img src=" {{ url_for('static', filename='images/LANCER_logo.png') }}" alt="logo">
+            <p>LANCER</p>
+        </div>
+    </a>
+    <div class="navLinks">
+        <a href="/">
+            Home
+        </a>
+        <a href="/exploreJobs">
+            Explore
+        </a>
+        <a href="/#about">
+            About
+        </a>
+        <a href="/#footer">
+            Contact
+        </a>
+
+        <!--  the links with 'hidden' class only appear on the offcanvas menu on MOBILE devices -->
+
+        {% if logged_in %}
+        <a href="/profile" class="hidden">
+            Profile
+        </a>
+        <a href="/action-center" class="hidden">
+            Action Center
+        </a>
+        <a href="/bookmarked-jobs" class="hidden">
+            Bookmarked Jobs
+        </a>
+        <a href="/logout" class="hidden">
+            Logout
+        </a>
+        {% else %}
+        <a href="/login" class="hidden">
+            Login
+        </a>
+        {% endif %}
+
+    </div>
+
+    <!-- the stuff that appears on larger screens: -->
+
+    {% if logged_in %}
+    <div class="user-profile">
+        <a href="#" class="default"><img src="{{ user_pfp['pfp_secure_url'] }}" class="userImg" alt=""
+                class="profile-picture"></a>
+        <dialog class="profileMenu"> <!-- dropdown dialog for the profile menu (JavaScript in 'user-base.html')) -->
+            <a href="/profile">
+                <svg width="800px" height="800px" viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                    <g id="SVGRepo_iconCarrier">
+                        <path
+                            d="M12.0001 13.09C14.4909 13.09 16.5101 11.0708 16.5101 8.58C16.5101 6.08919 14.4909 4.07 12.0001 4.07C9.5093 4.07 7.49011 6.08919 7.49011 8.58C7.49011 11.0708 9.5093 13.09 12.0001 13.09Z"
+                            stroke="#9290C3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M8.98008 11.91C8.97008 11.91 8.97008 11.91 8.96008 11.92" stroke="#9290C3"
+                            stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M16.9701 12.82C19.5601 14.4 21.3201 17.19 21.5001 20.4C21.5101 20.69 21.2801 20.93 20.9901 20.93H3.01007C2.72007 20.93 2.49007 20.69 2.50007 20.4C2.68007 17.21 4.43007 14.43 6.99007 12.85"
+                            stroke="#9290C3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                </svg> Profile</a>
+            <a href="/action-center">
+                <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                    <g id="SVGRepo_iconCarrier">
+                        <path d="M19.0703 19.0702C22.9803 15.1602 22.9803 8.83018 19.0703 4.93018" stroke="#9290C3"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M4.93055 4.93018C1.02055 8.84018 1.02055 15.1702 4.93055 19.0702" stroke="#9290C3"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M8.69922 21.4102C9.76922 21.7802 10.8792 21.9602 11.9992 21.9602C13.1192 21.9502 14.2292 21.7802 15.2992 21.4102"
+                            stroke="#9290C3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M8.69922 2.59009C9.76922 2.22009 10.8792 2.04004 11.9992 2.04004C13.1192 2.04004 14.2292 2.22009 15.2992 2.59009"
+                            stroke="#9290C3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path opacity="0.4"
+                            d="M8.74023 12.0001V10.3302C8.74023 8.25016 10.2103 7.40014 12.0103 8.44014L13.4602 9.28017L14.9102 10.1201C16.7102 11.1601 16.7102 12.8602 14.9102 13.9002L13.4602 14.7401L12.0103 15.5802C10.2103 16.6202 8.74023 15.7701 8.74023 13.6901V12.0001Z"
+                            stroke="#9290C3" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </g>
+                </svg> Action Center</a>
+            <a href="/bookmarked-jobs">
+                <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                    <g id="SVGRepo_iconCarrier">
+                        <path
+                            d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.07989 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.07989 19 6.2V21L12 16L5 21V6.2Z"
+                            stroke="#9290C3" stroke-width="2" stroke-linejoin="round" />
+                    </g>
+                </svg>
+                Bookmarked Jobs</a>
+            <a href="/logout">
+                <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                    <g id="SVGRepo_iconCarrier">
+                        <path d="M15 12L2 12M2 12L5.5 9M2 12L5.5 15" stroke="#9290C3" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.3531 21.8897 19.1752 21.9862 17 21.9983M9.00195 17C9.01406 19.175 9.11051 20.3529 9.87889 21.1213C10.5202 21.7626 11.4467 21.9359 13 21.9827"
+                            stroke="#9290C3" stroke-width="1.5" stroke-linecap="round" />
+                    </g>
+                </svg>
+                Logout</a>
+        </dialog>
+    </div>
+
+    {% else %}
+    <a href="/login"><button class="loginBtn">Login</button></a>
+
+    {% endif %}
+    <div class="mobileNavToggle hidden">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</nav>
+
+
+
+<div class="overlay">
+    <!-- when mobile off-canvas menu is open, overlay ensures that the stuff beyond the menu cannot be interacted with -->
+</div>

@@ -1,0 +1,145 @@
+<h1 class="heading"> Create Job Opening</h1>
+
+<div class="popup">
+    <span> <!-- filled dynamically by JS --> </span>
+    <button class="close">&#10005;</button>
+</div>
+
+
+
+<div class="jobFormContainer">
+    <form hx-post="/newJobData" hx-trigger="submit" hx-swap="none" enctype="multipart/form-data">
+        <div class="row">
+            <div>
+                <label for="title">Job Title:</label>
+                <input type="text" placeholder="Backend Developer" id="title" name="title" required>
+            </div>
+            <div>
+                <label for="company">Company:</label>
+                <input type="text" placeholder="Deloitte" id="company" name="company" required>
+            </div>
+            <div>
+                <label for="employmentType">Employment Type:</label>
+                <select id="employmentype" name="employment_type" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="Full-Time">Full Time</option>
+                    <option value="Part-Time">Part Time</option>
+                    <option value="Freelance">Freelance</option>
+                    <option value="Internship">Internship</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label for="workEnvironment">Work Environment:</label>
+                <select id="workEnvironment" name="work_environment" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="Remote">Remote</option>
+                    <option value="Onsite">Onsite</option>
+                </select>
+            </div>
+            <div>
+                <label for="location" id="locationLabel" required>Location:</label>
+                <input type="text" placeholder="Hyderabad, India" id="location" name="location" required>
+            </div>
+            <div>
+                <label for="experience">Experience:</label>
+                <select id="experience" name="experience" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="Entry-level">Entry-level</option>
+                    <option value="1+ Years">1+ years</option>
+                    <option value="3+ Years">3+ years</option>
+                    <option value="5+ Years">5+ years</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label for="salary">Salary:</label>
+                <input type="number" placeholder="Enter Salary in USD" id="salary" name="salary" required>
+            </div>
+            <div>
+                <label for="logo">Company Logo: <span class="msg"> file types:- svg, png, jpg, jpeg</span></label>
+                <input type="file" name="logo" id="logo" required>
+                <div class="invalid-feedback"> <!-- filled dynamically by JS --> </div>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label for="description">Job Description:</label>
+                <textarea placeholder="Enter Job Description
+
+Paragraph 1: Overview of the role and key responsibilities.
+Paragraph 2: Detailed description of daily tasks and expectations.
+Paragraph 3: Information about the team, work environment, and company culture." id="description" name="description" required></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label for="requirements">Job Requirements:</label>
+                <textarea placeholder="Enter Job Requirements, each on a new line. For Example:
+
+Requirement 1
+Requirement 2
+Requirement 3" id="requirements" name="requirements" required></textarea>
+            </div>
+        </div>
+        <button type="submit" id="button">Submit Form</button>
+
+    </form>
+</div>
+
+<script type="module">
+    /* ----------------------Admin Create Job Form ---------------------- */
+
+    //DISABLING LOCATION INPUT FIELD IF WORK ENVIRONMENT IS REMOTE:
+
+    document.getElementById('workEnvironment').addEventListener('change', function () {
+        let locationInput = document.getElementById('location');
+        let label = document.getElementById('locationLabel');
+        if (this.value == 'Remote') {
+            locationInput.value = 'Anywhere with Wi-Fi';
+            locationInput.disabled = true; //filter: grayscale(1) for disabled input fields is given in CSS
+            label.style.filter = 'grayscale(1)'; //make the label gray as well
+        } else {
+            locationInput.disabled = false;
+            if (locationInput.value === 'Anywhere with Wi-Fi') {
+                locationInput.value = '';
+            }
+            label.style.filter = 'grayscale(0)';
+        }
+    });
+
+
+    //HTMX RESPONSE HANDLER:
+
+    document.querySelector('form').addEventListener('htmx:afterRequest', (event) => { // check the reponse for success or error
+        const response = JSON.parse(event.detail.xhr.responseText); //extract and show the response
+        const status = event.detail.xhr.status;
+        console.log('message: ', response.message);
+
+        if ((status >= 200 && status < 300) || (status >= 500)) { // show the response in the popup
+            let popup = document.querySelector('.popup');
+            let closeBtn = popup.querySelector('.close');
+            popup.classList.remove('error', 'success'); // remove any previous classes added during previous responses
+            if(status >= 200 && status < 300)
+                popup.classList.add('success');
+            else if(status >= 500)
+                popup.classList.add('error');
+            popup.querySelector('.popup > span').innerText = response.message;
+            popup.classList.add('show');
+            closeBtn.addEventListener('click', () => {
+                popup.classList.remove('show');
+            });
+            popup.scrollIntoView({ behavior: 'smooth', block: 'center'}); // auto-scroll to the popup
+        } 
+        else if(status >= 400 && status < 500) { // invalid-file input response, show in the form itself
+            const invalid_msg = document.querySelector('.invalid-feedback');
+            document.querySelector('input[type="file"]').addEventListener('change', () => { // clear the invalid-feedback when the file input changes
+                invalid_msg.innerText = '';
+            });
+            invalid_msg.innerText = response.message;
+            invalid_msg.scrollIntoView({ behavior: 'smooth', block: 'center' }); // auto-scroll to the invalid-feedback
+        }
+    });
+</script>

@@ -2,7 +2,7 @@
 Lancer is a database-driven full-stack Job Portal designed to provide a seamless and efficient platform for browsing job opportunities. This web application enables job seekers to search, filter, and apply for job openings while keeping track of their application statuses. For the admin, the platform offers a comprehensive suite of tools for managing job listings, performing full CRUD operations on postings, and reviewing and managing applications, all through an intuitive admin interface.
 ## **Live Demo**
 Check out the live version hosted on Vercel: [https://lancerjobportal-qyqqi8ohx-prakhar436s-projects.vercel.app/](https://lancerjobportal-qyqqi8ohx-prakhar436s-projects.vercel.app/)
-#### Demo Admin Credentials:
+#### Admin Credentials:
 ##### Email address: prakharp436@gmail.com
 ##### Password: password
 ## **Features**

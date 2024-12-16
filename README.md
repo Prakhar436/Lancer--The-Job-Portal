@@ -38,9 +38,7 @@ Check out the live version hosted on Vercel: [https://lancerjobportal-qyqqi8ohx-
 #### Explore Page
 ![image](https://github.com/user-attachments/assets/9a4cbb8e-27b1-4e12-b31b-ae01a3b4df5d)
 #### Profile Page
-![image](https://github.com/user-attachments/assets/7db6024b-76eb-49c1-804f-9b9925dfd8b6)
-#### Action Center 
-![image](https://github.com/user-attachments/assets/56eefc9d-7a81-4a42-bbee-f1d1aedba7f9)
+![image](https://github.com/user-attachments/assets/d928f90a-b7b8-43b2-88b4-645b82f58c19)
 #### Admin: Dashboard
 ![image](https://github.com/user-attachments/assets/98828d2f-1238-400b-83c6-f289c340026f)
 #### Admin: Manage Jobs

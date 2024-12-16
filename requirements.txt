@@ -6,4 +6,5 @@ cloudinary
 werkzeug
 gunicorn
 Flask-Session
+cryptography
 redis

@@ -58,6 +58,15 @@
                 body.classList.remove('scroll-disable');
             }
         });
+        // close the navbar when clicked on a link inside it
+        navLinks.addEventListener('click', (e) => {
+            if(e.target.closest('a')){
+                hamburger.classList.remove('animate');
+                navLinks.classList.remove('showNavLinks');
+                overlay.classList.remove('activate-overlay');
+                body.classList.remove('scroll-disable');
+            }
+        });
         
 
         // --------------------Profile Menu Script (For Larger Devices) ----------------------

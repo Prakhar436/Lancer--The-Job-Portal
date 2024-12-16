@@ -33,11 +33,17 @@ Check out the live version hosted on Vercel: [https://lancerjobportal-qyqqi8ohx-
 - **Basic Logging:** Utilizes the Python `logging` module to log important events and errors for easier debugging and tracking.
 
 ## **Screenshots**
+#### Home Page
 ![image](https://github.com/user-attachments/assets/cd402b06-d6fc-44bb-90b3-11e13e6799f0)
+#### Explore Page
 ![image](https://github.com/user-attachments/assets/9a4cbb8e-27b1-4e12-b31b-ae01a3b4df5d)
+#### Profile Page
 ![image](https://github.com/user-attachments/assets/7db6024b-76eb-49c1-804f-9b9925dfd8b6)
+#### Action Center 
 ![image](https://github.com/user-attachments/assets/56eefc9d-7a81-4a42-bbee-f1d1aedba7f9)
+#### Admin: Dashboard
 ![image](https://github.com/user-attachments/assets/98828d2f-1238-400b-83c6-f289c340026f)
+#### Admin: Manage Jobs
 ![image](https://github.com/user-attachments/assets/48a83178-ec21-4852-bcb6-5a6a3a581647)
 
 ## **Technology Stack**

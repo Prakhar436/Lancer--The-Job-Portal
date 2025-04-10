@@ -31,6 +31,19 @@ Check out the live version hosted on Vercel: [https://lancerjobportal-qyqqi8ohx-
 - **Application Review:** Admins can review and process user applications.
 
 - **Basic Logging:** Utilizes the Python `logging` module to log important events and errors for easier debugging and tracking.
+
+## **Screenshots**
+#### Home Page
+![image](https://github.com/user-attachments/assets/cd402b06-d6fc-44bb-90b3-11e13e6799f0)
+#### Explore Page
+![image](https://github.com/user-attachments/assets/9a4cbb8e-27b1-4e12-b31b-ae01a3b4df5d)
+#### Profile Page
+![image](https://github.com/user-attachments/assets/d928f90a-b7b8-43b2-88b4-645b82f58c19)
+#### Admin: Dashboard
+![image](https://github.com/user-attachments/assets/98828d2f-1238-400b-83c6-f289c340026f)
+#### Admin: Manage Jobs
+![image](https://github.com/user-attachments/assets/48a83178-ec21-4852-bcb6-5a6a3a581647)
+
 ## **Technology Stack**
 - **Frontend:** HTML, CSS, JavaScript, HTMX
 - **Backend:** Flask (Python)
